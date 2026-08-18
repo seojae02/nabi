@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="Nabi — ask anything about life in Korea in your own language.">
+  <title>Nabi — Home (S01)</title>
+
+<style>
+  /* ══ Tokens — light is the base set (matches catchphrase.html) ══ */
+  :root {
+    --ground:    #F1F4F2;
+    --panel:     #FFFFFF;
+    --panel-2:   #F7F9F8;
+    --ink:       #14181A;
+    --ink-2:     #5A6660;
+    --ink-3:     #8A968F;
+    --rule:      #D3DAD6;
+    --rule-soft: #E4E9E6;
+    --guide:     #0B7A52;
+    --guide-ink: #FFFFFF;
+    --guide-dim: #0B7A5214;
+    --alert:     #C3352B;
+    --shadow:    0 1px 2px rgba(20, 24, 26, .04), 0 12px 32px rgba(20, 24, 26, .06);
+    --shadow-sm: 0 1px 2px rgba(20, 24, 26, .05);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:    #0D1211;
+      --panel:     #131A18;
+      --panel-2:   #182120;
+      --ink:       #EAF0EC;
+      --ink-2:     #93A29B;
+      --ink-3:     #6B7A74;
+      --rule:      #26302C;
+      --rule-soft: #1C2422;
+      --guide:     #45C08C;
+      --guide-ink: #06120D;
+      --guide-dim: #45C08C1A;
+      --alert:     #FF6B5E;
+      --shadow:    0 1px 2px rgba(0, 0, 0, .3), 0 12px 32px rgba(0, 0, 0, .35);
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, .3);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground:    #0D1211;
+    --panel:     #131A18;
+    --panel-2:   #182120;
+    --ink:       #EAF0EC;
+    --ink-2:     #93A29B;
+    --ink-3:     #6B7A74;
+    --rule:      #26302C;
+    --rule-soft: #1C2422;
+    --guide:     #45C08C;
+    --guide-ink: #06120D;
+    --guide-dim: #45C08C1A;
+    --alert:     #FF6B5E;
+    --shadow:    0 1px 2px rgba(0, 0, 0, .3), 0 12px 32px rgba(0, 0, 0, .35);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, .3);
+  }
+
+  :root {
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo",
+            "Malgun Gothic", "Noto Sans KR", "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    --pad: 20px;              /* screen.md 3.3 — 좌우 여백 20pt */
+    --tap: 44px;              /* screen.md 3.3 — 최소 터치 타겟 */
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;          /* 3.3 — 본문 최소 16pt */
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  button { font: inherit; color: inherit; }
+
+  :focus-visible {
+    outline: 2px solid var(--guide);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  .sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+        overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+  /* ══ Device frame — 375×812 기준, 데스크톱에서만 프레임으로 보임 ══ */
+  .stage {
+    min-height: 100dvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+  }
+
+  .phone {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    min-height: 100dvh;
+    background: var(--panel);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  @media (min-width: 760px) {
+    .stage { padding: 32px 24px; }
+    .phone {
+      width: 375px;
+      min-height: 0;
+      height: 812px;
+      max-height: calc(100dvh - 64px);
+      border: 1px solid var(--rule);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+    }
+  }
+
+  /* ══ Header ══════════════════════════════════════════════════ */
+  .band { height: 4px; background: var(--guide); flex: none; }
+
+  .hdr {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px var(--pad);
+    border-bottom: 1px solid var(--rule-soft);
+    background: var(--panel);
+  }
+
+  .brand { display: flex; align-items: center; gap: 8px; }
+  .brand .glyph { font-size: 1.15rem; line-height: 1; }
+  .brand b { font-size: 1.05rem; font-weight: 800; letter-spacing: -.02em; }
+
+  .lang-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    min-height: var(--tap); padding: 0 12px;
+    background: var(--panel-2);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    font-size: .875rem; font-weight: 600;
+    cursor: pointer;
+  }
+  .lang-btn .caret { color: var(--ink-3); font-size: .7rem; }
+
+  /* ══ Scroll body ═════════════════════════════════════════════ */
+  .scroll {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 24px var(--pad) 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+  }
+
+  /* ── Hero + ask ── */
+  h1.hero {
+    margin: 0;
+    font-size: 1.5rem;        /* 24pt Bold */
+    font-weight: 800;
+    line-height: 1.3;
+    letter-spacing: -.02em;
+  }
+
+  .ask { display: flex; flex-direction: column; gap: 12px; }
+
+  .ask-field {
+    display: flex; align-items: center; gap: 10px;
+    width: 100%;
+    min-height: 52px;
+    padding: 0 14px;
+    text-align: left;
+    background: var(--panel-2);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    cursor: pointer;
+  }
+  .ask-field .ph { flex: 1; color: var(--ink-3); }
+  .ask-field .mic {
+    font-size: 1.05rem;
+    opacity: .4;              /* 🎤 Post-MVP 비활성 자리 표시 */
+  }
+
+  .cta {
+    width: 100%;
+    min-height: var(--tap);
+    padding: 13px 16px;
+    background: var(--guide);
+    color: var(--guide-ink);
+    border: 0;
+    border-radius: 12px;
+    font-size: 1rem; font-weight: 700;
+    cursor: pointer;
+  }
+  .cta:active { transform: translateY(1px); }
+
+  .privacy {
+    display: flex; gap: 6px;
+    font-size: .78rem; line-height: 1.45;
+    color: var(--ink-3);
+  }
+
+  /* ── Section labels ── */
+  .label {
+    margin: 0 0 10px;
+    font-size: .875rem;       /* 14pt, 보조 색상 */
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+
+  /* ── Topic cards (3 across) ── */
+  .topics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+
+  .topic {
+    display: flex; flex-direction: column; gap: 4px;
+    min-height: 108px;
+    padding: 12px 10px;
+    text-align: left;
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+  }
+  .topic .ico { font-size: 1.35rem; line-height: 1.2; }
+  .topic .name { font-size: .9rem; font-weight: 700; letter-spacing: -.01em; }
+  .topic .sub { font-size: .72rem; line-height: 1.35; color: var(--ink-3); }
+  .topic:active { background: var(--guide-dim); }
+
+  /* ── Common questions ── */
+  .qlist {
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--panel);
+  }
+  .q {
+    display: flex; align-items: center; gap: 12px;
+    width: 100%;
+    min-height: 56px;
+    padding: 12px 14px;
+    text-align: left;
+    background: none;
+    border: 0;
+    border-top: 1px solid var(--rule-soft);
+    font-size: .92rem;
+    cursor: pointer;
+  }
+  .q:first-child { border-top: 0; }
+  .q .txt { flex: 1; line-height: 1.4; }
+  .q .arw { color: var(--ink-3); flex: none; }
+  .q:active { background: var(--guide-dim); }
+
+  /* ── Helper banner ── */
+  .helper {
+    display: flex; align-items: center; gap: 12px;
+    width: 100%;
+    min-height: var(--tap);
+    padding: 14px 16px;
+    text-align: left;
+    background: var(--guide-dim);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    cursor: pointer;
+  }
+  .helper .ico { font-size: 1.2rem; }
+  .helper .body { flex: 1; }
+  .helper .t { font-size: .92rem; font-weight: 700; }
+  .helper .s { font-size: .8rem; color: var(--ink-2); }
+  .helper .arw { color: var(--guide); font-weight: 700; }
+
+  hr.rule { border: 0; border-top: 1px solid var(--rule-soft); margin: 0; }
+
+  /* ══ Tab bar ═════════════════════════════════════════════════ */
+  .tabs {
+    flex: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--rule);
+    background: var(--panel);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .tab {
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    min-height: 56px;
+    padding: 8px 4px;
+    background: none; border: 0;
+    font-size: .68rem; font-weight: 600;
+    color: var(--ink-3);
+    cursor: pointer;
+  }
+  .tab .ico { font-size: 1.15rem; line-height: 1.2; }
+  .tab[aria-current="page"] { color: var(--guide); }
+
+  /* ══ Language sheet ══════════════════════════════════════════ */
+  .scrim {
+    position: absolute; inset: 0;
+    background: rgba(8, 14, 12, .45);
+    opacity: 0; pointer-events: none;
+    transition: opacity .18s ease;
+    z-index: 10;
+  }
+  .scrim[data-open="true"] { opacity: 1; pointer-events: auto; }
+
+  .sheet {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    background: var(--panel);
+    border-top: 1px solid var(--rule);
+    border-radius: 18px 18px 0 0;
+    padding: 8px var(--pad) calc(20px + env(safe-area-inset-bottom));
+    transform: translateY(101%);
+    transition: transform .22s cubic-bezier(.2, .8, .2, 1);
+    z-index: 11;
+  }
+  .sheet[data-open="true"] { transform: translateY(0); }
+
+  .grip {
+    width: 38px; height: 4px; margin: 6px auto 14px;
+    background: var(--rule); border-radius: 2px;
+  }
+  .sheet h2 { margin: 0 0 4px; font-size: 1.05rem; font-weight: 800; }
+  .sheet .sub { margin: 0 0 14px; font-size: .85rem; color: var(--ink-3); }
+
+  .opt {
+    display: flex; align-items: center; gap: 12px;
+    width: 100%;
+    min-height: 52px;
+    margin-bottom: 8px;
+    padding: 0 14px;
+    text-align: left;
+    background: var(--panel-2);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    font-size: .95rem; font-weight: 600;
+    cursor: pointer;
+  }
+  .opt .flag { font-size: 1.1rem; }
+  .opt .name { flex: 1; }
+  .opt .soon { font-size: .75rem; font-weight: 600; color: var(--ink-3); }
+  .opt .check { color: var(--guide); font-weight: 800; }
+  .opt[data-sel="true"] { border-color: var(--guide); background: var(--guide-dim); }
+  .opt[data-soon="true"] { opacity: .4; }   /* screen.md S00 — 40% opacity */
+
+  /* ══ Toast ═══════════════════════════════════════════════════ */
+  .toast {
+    position: absolute; left: 50%; bottom: 84px;
+    transform: translate(-50%, 8px);
+    max-width: calc(100% - 40px);
+    padding: 11px 16px;
+    background: var(--ink);
+    color: var(--ground);
+    border-radius: 10px;
+    font-size: .84rem; font-weight: 600;
+    text-align: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity .18s ease, transform .18s ease;
+    z-index: 20;
+  }
+  .toast[data-open="true"] { opacity: .96; transform: translate(-50%, 0); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sheet, .scrim, .toast { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="phone">
+    <div class="band"></div>
+
+    <!-- ── Header — 3.1 (S01: 🌏 Nabi / — / 🇺🇸 EN ▾) ─────────── -->
+    <header class="hdr">
+      <div class="brand">
+        <span class="glyph" aria-hidden="true">🌏</span>
+        <b>Nabi</b>
+      </div>
+      <button class="lang-btn" id="langBtn" aria-haspopup="dialog" aria-expanded="false">
+        <span class="flag" id="langFlag" aria-hidden="true">🇺🇸</span>
+        <span id="langCode">EN</span>
+        <span class="caret" aria-hidden="true">▾</span>
+        <span class="sr" id="langSr">Change language</span>
+      </button>
+    </header>
+
+    <!-- ── Body ───────────────────────────────────────────────── -->
+    <main class="scroll">
+
+      <section class="ask">
+        <h1 class="hero" data-i18n="hero"></h1>
+
+        <!-- 홈에서 직접 입력받지 않는다 (screen.md S01 요소 명세) -->
+        <button class="ask-field" data-go="S02" data-topic="auto">
+          <span class="ph" data-i18n="askPlaceholder"></span>
+          <span class="mic" aria-hidden="true">🎤</span>
+          <span class="sr" data-i18n="micSoon"></span>
+        </button>
+
+        <button class="cta" data-go="S02" data-topic="auto" data-i18n="askCta"></button>
+
+        <p class="privacy">
+          <span aria-hidden="true">ⓘ</span>
+          <span data-i18n="privacy"></span>
+        </p>
+      </section>
+
+      <section>
+        <p class="label" data-i18n="topicsLabel"></p>
+        <div class="topics">
+          <button class="topic" data-go="S02" data-topic="medical">
+            <span class="ico" aria-hidden="true">🏥</span>
+            <span class="name" data-i18n="t.medical.name"></span>
+            <span class="sub" data-i18n="t.medical.sub"></span>
+          </button>
+          <button class="topic" data-go="S02" data-topic="housing">
+            <span class="ico" aria-hidden="true">🏠</span>
+            <span class="name" data-i18n="t.housing.name"></span>
+            <span class="sub" data-i18n="t.housing.sub"></span>
+          </button>
+          <button class="topic" data-go="S02" data-topic="admin">
+            <span class="ico" aria-hidden="true">🏛️</span>
+            <span class="name" data-i18n="t.admin.name"></span>
+            <span class="sub" data-i18n="t.admin.sub"></span>
+          </button>
+        </div>
+      </section>
+
+      <section>
+        <p class="label" data-i18n="commonLabel"></p>
+        <div class="qlist">
+          <button class="q" data-go="S02" data-topic="housing">
+            <span class="txt" data-i18n="q1"></span>
+            <span class="arw" aria-hidden="true">→</span>
+          </button>
+          <button class="q" data-go="S02" data-topic="admin">
+            <span class="txt" data-i18n="q2"></span>
+            <span class="arw" aria-hidden="true">→</span>
+          </button>
+          <button class="q" data-go="S02" data-topic="medical">
+            <span class="txt" data-i18n="q3"></span>
+            <span class="arw" aria-hidden="true">→</span>
+          </button>
+        </div>
+      </section>
+
+      <hr class="rule">
+
+      <!-- AI를 거치지 않고 바로 사람을 찾는 경로 → S03 (분야 미지정) -->
+      <button class="helper" data-go="S03" data-topic="none">
+        <span class="ico" aria-hidden="true">🗣️</span>
+        <span class="body">
+          <span class="t" data-i18n="helperTitle"></span><br>
+          <span class="s" data-i18n="helperSub"></span>
+        </span>
+        <span class="arw" aria-hidden="true">→</span>
+      </button>
+
+    </main>
+
+    <!-- ── Tab bar — 2장 (S01 / S05 / S06) ────────────────────── -->
+    <nav class="tabs">
+      <button class="tab" aria-current="page">
+        <span class="ico" aria-hidden="true">🏠</span>
+        <span data-i18n="tabHome"></span>
+      </button>
+      <button class="tab" data-go="S05">
+        <span class="ico" aria-hidden="true">📞</span>
+        <span data-i18n="tabOrgs"></span>
+      </button>
+      <button class="tab" data-go="S06">
+        <span class="ico" aria-hidden="true">⚙️</span>
+        <span data-i18n="tabSettings"></span>
+      </button>
+    </nav>
+
+    <!-- ── Language sheet ─────────────────────────────────────── -->
+    <div class="scrim" id="scrim"></div>
+    <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+      <div class="grip" aria-hidden="true"></div>
+      <h2 id="sheetTitle" data-i18n="sheetTitle"></h2>
+      <p class="sub" data-i18n="sheetSub"></p>
+      <div id="opts"></div>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════
+   i18n — PRD 7장: UI 문자열은 하드코딩하지 않고 리소스로 분리한다.
+   언어 추가 = 아래 객체에 항목 추가 + LANGS 에 등록.
+   ══════════════════════════════════════════════════════════════ */
+const LANGS = [
+  { id: 'en', code: 'EN', flag: '🇺🇸', label: 'English',    ready: true  },
+  { id: 'ko', code: 'KO', flag: '🇰🇷', label: '한국어',      ready: true  },
+  { id: 'vi', code: 'VI', flag: '🇻🇳', label: 'Tiếng Việt', ready: false },
+  { id: 'zh', code: 'ZH', flag: '🇨🇳', label: '中文',        ready: false },
+];
+
+const STRINGS = {
+  en: {
+    hero: 'How can we help you\nwith life in Korea?',
+    askPlaceholder: 'Ask anything...',
+    micSoon: 'Voice input — coming soon',
+    askCta: 'Ask AI',
+    privacy: "We don't store your chats or personal information.",
+    topicsLabel: 'Or choose a topic',
+    't.medical.name': 'Medical', 't.medical.sub': 'Hospital, pharmacy, insurance',
+    't.housing.name': 'Housing', 't.housing.sub': 'Contract, deposit, moving',
+    't.admin.name': 'Admin',     't.admin.sub': 'Visa, documents, reports',
+    commonLabel: 'Common questions',
+    q1: 'Can foreigners sign a jeonse contract?',
+    q2: 'How do I report an address change?',
+    q3: 'Is health insurance available to foreigners?',
+    helperTitle: 'Need to talk to a person?',
+    helperSub: 'Connect with a helper',
+    tabHome: 'Home', tabOrgs: 'Orgs', tabSettings: 'Settings',
+    sheetTitle: 'Choose language',
+    sheetSub: "You can change this anytime.",
+    soon: 'soon',
+    toastSoon: 'Coming soon',
+    nav: { S02: 'Opens AI chat (S02) — topic: %s', S03: 'Opens Request Help (S03)',
+           S05: 'Opens Organizations (S05)', S06: 'Opens Settings (S06)' },
+  },
+  ko: {
+    hero: '한국 생활, 무엇을\n도와드릴까요?',
+    askPlaceholder: '무엇이든 물어보세요...',
+    micSoon: '음성 입력 — 준비 중',
+    askCta: 'AI에게 묻기',
+    privacy: '대화 내용과 개인정보를 저장하지 않습니다.',
+    topicsLabel: '또는 분야를 선택하세요',
+    't.medical.name': '의료',   't.medical.sub': '병원 · 약국 · 건강보험',
+    't.housing.name': '부동산', 't.housing.sub': '계약 · 보증금 · 이사',
+    't.admin.name': '행정',     't.admin.sub': '비자 · 서류 · 신고',
+    commonLabel: '자주 묻는 질문',
+    q1: '외국인도 전세 계약을 할 수 있나요?',
+    q2: '주소가 바뀌었는데 어디에 신고하나요?',
+    q3: '외국인도 건강보험이 적용되나요?',
+    helperTitle: '사람과 이야기하고 싶으세요?',
+    helperSub: '언어 지원자 연결하기',
+    tabHome: '홈', tabOrgs: '기관', tabSettings: '설정',
+    sheetTitle: '언어를 선택하세요',
+    sheetSub: '언제든지 변경할 수 있습니다.',
+    soon: '준비 중',
+    toastSoon: '곧 제공됩니다',
+    nav: { S02: 'AI 상담(S02)으로 이동 — 분야: %s', S03: '연결 요청서(S03)로 이동',
+           S05: '기관 목록(S05)으로 이동', S06: '설정(S06)으로 이동' },
+  },
+};
+
+const TOPIC_NAMES = {
+  en: { auto: 'auto-detect', medical: 'Medical', housing: 'Housing', admin: 'Admin', none: '—' },
+  ko: { auto: '자동 판별', medical: '의료', housing: '부동산', admin: '행정', none: '미지정' },
+};
+
+/* ── 언어 상태 ──────────────────────────────────────────────── */
+const STORE_KEY = 'nabi.lang';
+
+function detectLang() {
+  try {
+    const saved = localStorage.getItem(STORE_KEY);
+    if (saved && STRINGS[saved]) return saved;
+  } catch (e) { /* private mode */ }
+  const nav = (navigator.language || 'en').slice(0, 2).toLowerCase();
+  return STRINGS[nav] ? nav : 'en';       // PRD 7장 — navigator.language 로 기본값 추정
+}
+
+let lang = detectLang();
+
+function t(key) { return STRINGS[lang][key] ?? STRINGS.en[key] ?? key; }
+
+function render() {
+  const meta = LANGS.find(l => l.id === lang);
+  document.documentElement.lang = lang;
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const val = t(el.dataset.i18n);
+    // hero 는 줄바꿈을 유지한다
+    if (val.includes('\n')) el.innerHTML = val.split('\n')
+      .map(s => s.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])))
+      .join('<br>');
+    else el.textContent = val;
+  });
+
+  document.getElementById('langFlag').textContent = meta.flag;
+  document.getElementById('langCode').textContent = meta.code;
+  document.getElementById('langSr').textContent = t('sheetTitle') + ' — ' + meta.label;
+  document.getElementById('langBtn').setAttribute('aria-label', t('sheetTitle') + ': ' + meta.label);
+
+  renderOptions();
+}
+
+function setLang(next) {
+  lang = next;
+  try { localStorage.setItem(STORE_KEY, next); } catch (e) { /* ignore */ }
+  render();                                 // 3.1 — 현재 화면 유지한 채 즉시 리렌더
+}
+
+/* ── 언어 시트 ──────────────────────────────────────────────── */
+const scrim = document.getElementById('scrim');
+const sheet = document.getElementById('sheet');
+const langBtn = document.getElementById('langBtn');
+
+function renderOptions() {
+  const box = document.getElementById('opts');
+  box.innerHTML = '';
+  LANGS.forEach(l => {
+    const b = document.createElement('button');
+    b.className = 'opt';
+    b.dataset.sel = String(l.id === lang);
+    b.dataset.soon = String(!l.ready);
+    // 국기는 보조 신호 — 언어명은 해당 언어로 표기 (screen.md S00)
+    b.innerHTML =
+      `<span class="flag" aria-hidden="true">${l.flag}</span>` +
+      `<span class="name">${l.label}</span>` +
+      (l.ready
+        ? (l.id === lang ? '<span class="check" aria-hidden="true">✓</span>' : '')
+        : `<span class="soon">(${t('soon')})</span>`);
+    b.setAttribute('aria-label', l.label + (l.ready ? '' : ' — ' + t('soon')));
+    if (l.id === lang) b.setAttribute('aria-current', 'true');
+    b.addEventListener('click', () => {
+      if (!l.ready) { toast(t('toastSoon')); return; }   // soon 항목 → 토스트
+      setLang(l.id);
+      closeSheet();
+    });
+    box.appendChild(b);
+  });
+}
+
+function openSheet() {
+  scrim.dataset.open = 'true';
+  sheet.dataset.open = 'true';
+  langBtn.setAttribute('aria-expanded', 'true');
+  sheet.querySelector('.opt')?.focus();
+}
+function closeSheet() {
+  scrim.dataset.open = 'false';
+  sheet.dataset.open = 'false';
+  langBtn.setAttribute('aria-expanded', 'false');
+  langBtn.focus();
+}
+
+langBtn.addEventListener('click', openSheet);
+scrim.addEventListener('click', closeSheet);
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && sheet.dataset.open === 'true') closeSheet();
+});
+
+/* ── 토스트 ─────────────────────────────────────────────────── */
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.dataset.open = 'true';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.dataset.open = 'false'; }, 2200);
+}
+
+/* ── 네비게이션 (S02~S06 미구현 — 목적지를 토스트로 표시) ────── */
+document.querySelectorAll('[data-go]').forEach(el => {
+  el.addEventListener('click', () => {
+    const dest = el.dataset.go;
+    const topic = el.dataset.topic || 'none';
+    const tpl = STRINGS[lang].nav[dest] || dest;
+    toast(tpl.replace('%s', TOPIC_NAMES[lang][topic] || topic));
+  });
+});
+
+render();
+</script>
+</body>
+</html>

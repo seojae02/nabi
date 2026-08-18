@@ -1,0 +1,14 @@
+# Vercel
+.vercel
+
+# macOS
+.DS_Store
+
+# Local editor / tooling settings
+.claude/settings.local.json
+
+# Dependencies
+node_modules/
+
+# Logs
+*.log
