@@ -1,0 +1,11 @@
+{
+  "name": "nabi",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Nabi — life support service for foreign residents in Korea",
+  "scripts": {
+    "dev": "node --env-file=key.env scripts/dev.mjs",
+    "deploy": "vercel deploy --prod --yes"
+  }
+}

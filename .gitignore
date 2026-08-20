@@ -12,3 +12,14 @@ node_modules/
 
 # Logs
 *.log
+
+# Local env (never commit)
+.env
+.env.local
+.env*.local
+key.env
+*.env
+!.env.example
+
+# 스킬 설치 시 자동 생성되는 심볼릭 링크 (원본은 .agents/skills)
+.claude/skills/

@@ -5,489 +5,1290 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="color-scheme" content="light dark">
   <meta name="description" content="Nabi — ask anything about life in Korea in your own language.">
-  <title>Nabi — Home (S01)</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%230A7A85%22%20d%3D%22M12%206.2C10.1%203.9%206.4%201.9%204%203.2%201.9%204.4%201.7%208%203.4%2010.2c1.7%202.2%205%203%208.6%202.6z%22%2F%3E%3Cpath%20fill%3D%22%230A7A85%22%20d%3D%22M12%2013.6c-3.4.1-6.4%201-7.4%203.1-1%202.2.4%204.6%202.8%204.8%202.3.2%204.2-2.2%204.6-5.5z%22%2F%3E%3Cpath%20fill%3D%22%23E8A33D%22%20d%3D%22M12%206.2c1.9-2.3%205.6-4.3%208-3%202.1%201.2%202.3%204.8.6%207-1.7%202.2-5%203-8.6%202.6z%22%2F%3E%3Cpath%20fill%3D%22%23E8A33D%22%20d%3D%22M12%2013.6c3.4.1%206.4%201%207.4%203.1%201%202.2-.4%204.6-2.8%204.8-2.3.2-4.2-2.2-4.6-5.5z%22%2F%3E%3Cpath%20stroke%3D%22%230F262B%22%20stroke-width%3D%221.3%22%20stroke-linecap%3D%22round%22%20d%3D%22M12%205.4v13.4%22%2F%3E%3C%2Fsvg%3E">
+  <title>Nabi</title>
 
 <style>
-  /* ══ Tokens — light is the base set (matches catchphrase.html) ══ */
+  /* ══ Tokens ══════════════════════════════════════════════════ */
+  /* 단청(丹靑) 계열 — 청(靑)을 주색, 황(黃)을 날개색, 적(赤)을 경보색으로.
+     한국 전통 나비 문양의 색 구성을 그대로 역할에 대응시켰다. */
   :root {
-    --ground:    #F1F4F2;
-    --panel:     #FFFFFF;
-    --panel-2:   #F7F9F8;
-    --ink:       #14181A;
-    --ink-2:     #5A6660;
-    --ink-3:     #8A968F;
-    --rule:      #D3DAD6;
-    --rule-soft: #E4E9E6;
-    --guide:     #0B7A52;
-    --guide-ink: #FFFFFF;
-    --guide-dim: #0B7A5214;
-    --alert:     #C3352B;
-    --shadow:    0 1px 2px rgba(20, 24, 26, .04), 0 12px 32px rgba(20, 24, 26, .06);
-    --shadow-sm: 0 1px 2px rgba(20, 24, 26, .05);
+    --ground:#F3F7F8; --panel:#FFFFFF; --panel-2:#EFF6F7;
+    --ink:#0F262B; --ink-2:#47686E; --ink-3:#7C979D;
+    --rule:#D0E1E4; --rule-soft:#E4EEF0;
+    --guide:#0A7A85; --guide-ink:#FFFFFF; --guide-dim:#0A7A8517;
+    --wing:#E8A33D; --wing-ink:#8F5D0C; --wing-dim:#E8A33D26;
+    --iris:#4A6FB5; --iris-dim:#4A6FB51E;
+    --alert:#D14127; --alert-dim:#D1412714;
+    --shadow:0 1px 2px rgba(15,38,43,.05), 0 14px 34px rgba(15,38,43,.07);
+    --shadow-sm:0 1px 2px rgba(15,38,43,.06);
   }
-
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --ground:    #0D1211;
-      --panel:     #131A18;
-      --panel-2:   #182120;
-      --ink:       #EAF0EC;
-      --ink-2:     #93A29B;
-      --ink-3:     #6B7A74;
-      --rule:      #26302C;
-      --rule-soft: #1C2422;
-      --guide:     #45C08C;
-      --guide-ink: #06120D;
-      --guide-dim: #45C08C1A;
-      --alert:     #FF6B5E;
-      --shadow:    0 1px 2px rgba(0, 0, 0, .3), 0 12px 32px rgba(0, 0, 0, .35);
-      --shadow-sm: 0 1px 2px rgba(0, 0, 0, .3);
+      --ground:#061518; --panel:#0D2126; --panel-2:#132C32;
+      --ink:#E7F3F4; --ink-2:#93B1B6; --ink-3:#6D8B90;
+      --rule:#22434A; --rule-soft:#18343A;
+      --guide:#3BC3CE; --guide-ink:#04181B; --guide-dim:#3BC3CE1F;
+      --wing:#F0B457; --wing-ink:#F0B457; --wing-dim:#F0B45730;
+      --iris:#7FA0E8; --iris-dim:#7FA0E828;
+      --alert:#FF6E52; --alert-dim:#FF6E5222;
+      --shadow:0 1px 2px rgba(0,0,0,.34), 0 14px 34px rgba(0,0,0,.4);
+      --shadow-sm:0 1px 2px rgba(0,0,0,.34);
     }
   }
-
   :root[data-theme="dark"] {
-    --ground:    #0D1211;
-    --panel:     #131A18;
-    --panel-2:   #182120;
-    --ink:       #EAF0EC;
-    --ink-2:     #93A29B;
-    --ink-3:     #6B7A74;
-    --rule:      #26302C;
-    --rule-soft: #1C2422;
-    --guide:     #45C08C;
-    --guide-ink: #06120D;
-    --guide-dim: #45C08C1A;
-    --alert:     #FF6B5E;
-    --shadow:    0 1px 2px rgba(0, 0, 0, .3), 0 12px 32px rgba(0, 0, 0, .35);
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, .3);
+    --ground:#061518; --panel:#0D2126; --panel-2:#132C32;
+    --ink:#E7F3F4; --ink-2:#93B1B6; --ink-3:#6D8B90;
+    --rule:#22434A; --rule-soft:#18343A;
+    --guide:#3BC3CE; --guide-ink:#04181B; --guide-dim:#3BC3CE1F;
+    --wing:#F0B457; --wing-ink:#F0B457; --wing-dim:#F0B45730;
+    --iris:#7FA0E8; --iris-dim:#7FA0E828;
+    --alert:#FF6E52; --alert-dim:#FF6E5222;
+    --shadow:0 1px 2px rgba(0,0,0,.34), 0 14px 34px rgba(0,0,0,.4);
+    --shadow-sm:0 1px 2px rgba(0,0,0,.34);
   }
-
+  /* 서체 3역. 웹폰트를 쓰지 않으므로 외부 요청은 여전히 0이고,
+     기관 목록은 오프라인에서도 열린다. 숫자는 등폭 — 이 앱은
+     '눌러서 거는 번호'로 가득하고, 등폭이면 자리수가 바로 잡힌다. */
   :root {
-    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo",
-            "Malgun Gothic", "Noto Sans KR", "Helvetica Neue", Arial, sans-serif;
-    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-    --pad: 20px;              /* screen.md 3.3 — 좌우 여백 20pt */
-    --tap: 44px;              /* screen.md 3.3 — 최소 터치 타겟 */
+    --sans:-apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo",
+           "Malgun Gothic", "Noto Sans KR", "Helvetica Neue", Arial, sans-serif;
+    --mono:ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    --pad:20px; --tap:44px;
   }
 
-  * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; }
+  /* 숫자 유틸 — 전화번호 · 운영시간 · 언어코드 */
+  .num {
+    font-family:var(--mono);
+    font-variant-numeric:tabular-nums;
+    letter-spacing:-.01em;
+  }
 
+  * { box-sizing:border-box; }
+  html { -webkit-text-size-adjust:100%; }
   body {
-    margin: 0;
-    background: var(--ground);
-    color: var(--ink);
-    font-family: var(--sans);
-    font-size: 16px;          /* 3.3 — 본문 최소 16pt */
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
+    margin:0; background:var(--ground); color:var(--ink);
+    font-family:var(--sans); font-size:16px; line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  button, textarea, input, select { font:inherit; color:inherit; }
+  :focus-visible { outline:2px solid var(--guide); outline-offset:2px; border-radius:4px; }
+  .sr { position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+        overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+
+  /* ══ Icons — 24×24 · 1.6 stroke · currentColor ═══════════════ */
+  .sprite { position:absolute; width:0; height:0; overflow:hidden; }
+  .ico {
+    width:20px; height:20px; flex:none; fill:none; stroke:currentColor;
+    stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round;
   }
 
-  button { font: inherit; color: inherit; }
-
-  :focus-visible {
-    outline: 2px solid var(--guide);
-    outline-offset: 2px;
-    border-radius: 4px;
-  }
-
-  .sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-        overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
-
-  /* ══ Device frame — 375×812 기준, 데스크톱에서만 프레임으로 보임 ══ */
-  .stage {
-    min-height: 100dvh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0;
-  }
-
+  /* ══ Frame ═══════════════════════════════════════════════════ */
+  .stage { min-height:100dvh; display:flex; justify-content:center; align-items:center; }
   .phone {
-    position: relative;
-    width: 100%;
-    max-width: 420px;
-    min-height: 100dvh;
-    background: var(--panel);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    position:relative; width:100%; max-width:420px; min-height:100dvh;
+    background:var(--panel); display:flex; flex-direction:column; overflow:hidden;
   }
-
-  @media (min-width: 760px) {
-    .stage { padding: 32px 24px; }
+  @media (min-width:760px) {
+    .stage { padding:32px 24px; }
     .phone {
-      width: 375px;
-      min-height: 0;
-      height: 812px;
-      max-height: calc(100dvh - 64px);
-      border: 1px solid var(--rule);
-      border-radius: 22px;
-      box-shadow: var(--shadow);
+      width:375px; min-height:0; height:812px; max-height:calc(100dvh - 64px);
+      border:1px solid var(--rule); border-radius:22px; box-shadow:var(--shadow);
     }
   }
+  /* 시그니처: 청→황 날개 그라디언트. 로고 · 상단 띠 · 활성 탭에만 쓴다. */
+  .band {
+    height:4px; flex:none;
+    background:linear-gradient(90deg, var(--guide) 0%, var(--wing) 100%);
+  }
+  .stack { position:relative; flex:1 1 auto; min-height:0; display:flex; }
+
+  .view { display:none; flex:1 1 auto; min-width:0; min-height:0; flex-direction:column; }
+  .view[data-active="true"] { display:flex; }
 
   /* ══ Header ══════════════════════════════════════════════════ */
-  .band { height: 4px; background: var(--guide); flex: none; }
-
   .hdr {
-    flex: none;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 10px var(--pad);
-    border-bottom: 1px solid var(--rule-soft);
-    background: var(--panel);
+    flex:none; display:flex; align-items:center; justify-content:space-between;
+    gap:10px; padding:10px var(--pad);
+    border-bottom:1px solid var(--rule-soft); background:var(--panel);
   }
+  .brand { display:flex; align-items:center; gap:9px; min-width:0; }
+  .brand b { font-size:1.05rem; font-weight:800; letter-spacing:-.02em; }
+  /* 나비 마크 — 이름이 곧 시그니처다. 좌우 날개를 청/황으로 나눈다. */
+  .logo { flex:none; }
+  .logo .w1 { fill:var(--guide); }
+  .logo .w2 { fill:var(--wing); }
+  .logo .bd { fill:none; stroke:var(--ink); stroke-width:1.3; stroke-linecap:round; }
+  .brand .logo { width:27px; height:27px; }
 
-  .brand { display: flex; align-items: center; gap: 8px; }
-  .brand .glyph { font-size: 1.15rem; line-height: 1; }
-  .brand b { font-size: 1.05rem; font-weight: 800; letter-spacing: -.02em; }
+  .icon-btn {
+    display:grid; place-items:center; width:var(--tap); height:var(--tap);
+    margin-left:-12px; background:none; border:0; color:var(--ink);
+    cursor:pointer; flex:none;
+  }
+  .hdr-title {
+    display:flex; align-items:center; gap:8px; min-width:0; flex:1;
+    font-size:.98rem; font-weight:700; letter-spacing:-.01em;
+  }
+  .hdr-title .ico { width:19px; height:19px; color:var(--guide); }
+  /* 나비 마크는 채색 도형이므로 stroke 규격을 벗는다 */
+  .hdr-title .ico.is-logo { fill:currentColor; stroke:none; }
+  .hdr-title .ico.is-logo .w1 { fill:var(--guide); }
+  .hdr-title .ico.is-logo .w2 { fill:var(--wing); }
+  .hdr-title .ico.is-logo .bd { fill:none; stroke:var(--ink-2); stroke-width:1.3; }
+  .hdr-title span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 
   .lang-btn {
-    display: inline-flex; align-items: center; gap: 6px;
-    min-height: var(--tap); padding: 0 12px;
-    background: var(--panel-2);
-    border: 1px solid var(--rule);
-    border-radius: 999px;
-    font-size: .875rem; font-weight: 600;
-    cursor: pointer;
+    display:inline-flex; align-items:center; gap:6px; flex:none;
+    min-height:var(--tap); padding:0 12px;
+    background:var(--panel-2); border:1px solid var(--rule); border-radius:999px;
+    font-size:.875rem; font-weight:700; letter-spacing:.01em; cursor:pointer;
   }
-  .lang-btn .caret { color: var(--ink-3); font-size: .7rem; }
+  .lang-btn .ico { width:17px; height:17px; color:var(--ink-2); }
+  .lang-btn .caret { width:13px; height:13px; color:var(--ink-3); }
 
-  /* ══ Scroll body ═════════════════════════════════════════════ */
+  /* ══ Scroll ══════════════════════════════════════════════════ */
   .scroll {
-    flex: 1 1 auto;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    padding: 24px var(--pad) 28px;
-    display: flex;
-    flex-direction: column;
-    gap: 26px;
+    flex:1 1 auto; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch;
+    padding:24px var(--pad) 28px;
+    display:flex; flex-direction:column; gap:26px;
   }
-
-  /* ── Hero + ask ── */
   h1.hero {
-    margin: 0;
-    font-size: 1.5rem;        /* 24pt Bold */
-    font-weight: 800;
-    line-height: 1.3;
-    letter-spacing: -.02em;
+    margin:0; font-size:1.68rem; font-weight:900;
+    line-height:1.18; letter-spacing:-.035em;
   }
+  /* 섹션 라벨 앞의 날개 대시 — 시그니처를 반복하고 문자 체계와 무관하게 동작한다 */
+  .label {
+    display:flex; align-items:center; gap:8px;
+    margin:0 0 11px;
+    font-size:.8rem; font-weight:800; letter-spacing:.01em; color:var(--ink-2);
+  }
+  .label::before {
+    content:''; flex:none; width:16px; height:3px; border-radius:2px;
+    background:linear-gradient(90deg, var(--guide), var(--wing));
+  }
+  hr.rule { border:0; border-top:1px solid var(--rule-soft); margin:0; }
 
-  .ask { display: flex; flex-direction: column; gap: 12px; }
+  /* ══ S00 · Onboarding ════════════════════════════════════════ */
+  .onboard {
+    flex:1 1 auto; min-height:0; overflow-y:auto;
+    padding:36px var(--pad) 28px;
+    display:flex; flex-direction:column; gap:22px;
+  }
+  .onboard .top { display:flex; flex-direction:column; align-items:center; gap:14px; text-align:center; }
+  .onboard .logo { width:62px; height:62px; }
+  .onboard h1 { margin:0; font-size:1.3rem; font-weight:800; letter-spacing:-.02em; }
+  .onboard h1 small { display:block; margin-top:5px; font-size:.92rem; font-weight:600; color:var(--ink-3); }
+  .onboard .grow { flex:1 1 auto; min-height:10px; }
 
+  /* ══ Ask card — 홈의 주 행동 영역 ════════════════════════════ */
+  .ask-card {
+    display:flex; flex-direction:column; gap:13px;
+    padding:18px 16px 16px;
+    background:var(--panel-2); border:1px solid var(--rule);
+    border-radius:16px; box-shadow:var(--shadow-sm);
+  }
+  /* 실제로 입력되는 창 — 버튼은 이 내용을 보내는 역할만 한다 */
   .ask-field {
-    display: flex; align-items: center; gap: 10px;
-    width: 100%;
-    min-height: 52px;
-    padding: 0 14px;
-    text-align: left;
-    background: var(--panel-2);
-    border: 1px solid var(--rule);
-    border-radius: 12px;
-    cursor: pointer;
+    display:flex; align-items:flex-end; gap:10px; width:100%;
+    padding:5px 12px 5px 14px;
+    background:var(--panel); border:1px solid var(--rule); border-radius:12px;
   }
-  .ask-field .ph { flex: 1; color: var(--ink-3); }
-  .ask-field .mic {
-    font-size: 1.05rem;
-    opacity: .4;              /* 🎤 Post-MVP 비활성 자리 표시 */
+  .ask-field:focus-within { border-color:var(--guide); }
+  .ask-field textarea {
+    flex:1; min-height:42px; max-height:120px; padding:10px 0;
+    background:none; border:0; resize:none; overflow-y:auto;
+    font-size:.95rem; line-height:1.4;
   }
+  .ask-field textarea:focus { outline:none; }
+  .ask-field textarea::placeholder { color:var(--ink-3); }
+  /* 음성 입력 — Web Speech API. 브라우저가 처리하므로 별도 키가 없다 */
+  .mic {
+    display:grid; place-items:center; flex:none;
+    background:none; border:0; color:var(--ink-3); cursor:pointer;
+  }
+  .ask-field .mic { width:34px; height:42px; }
+  .composer .mic {
+    width:var(--tap); height:var(--tap); border-radius:50%;
+    background:var(--panel-2); border:1px solid var(--rule);
+  }
+  .mic[data-rec="true"] {
+    color:var(--alert); border-color:var(--alert);
+    animation:pulse 1.2s infinite ease-in-out;
+  }
+  .mic[data-unsupported="true"] { opacity:.35; }
+  @keyframes pulse { 0%,100% { opacity:1 } 50% { opacity:.45 } }
 
   .cta {
-    width: 100%;
-    min-height: var(--tap);
-    padding: 13px 16px;
-    background: var(--guide);
-    color: var(--guide-ink);
-    border: 0;
-    border-radius: 12px;
-    font-size: 1rem; font-weight: 700;
-    cursor: pointer;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    width:100%; min-height:var(--tap); padding:13px 16px;
+    background:var(--guide); color:var(--guide-ink);
+    border:0; border-radius:12px; font-size:1rem; font-weight:700; cursor:pointer;
   }
-  .cta:active { transform: translateY(1px); }
+  .cta .ico { width:18px; height:18px; }
+  .cta:active { transform:translateY(1px); }
+  .cta:disabled { opacity:.4; cursor:default; transform:none; }
 
   .privacy {
-    display: flex; gap: 6px;
-    font-size: .78rem; line-height: 1.45;
-    color: var(--ink-3);
+    display:flex; gap:7px; align-items:flex-start; margin:0;
+    font-size:.78rem; line-height:1.45; color:var(--ink-3);
   }
+  .privacy .ico { width:14px; height:14px; margin-top:2px; }
 
-  /* ── Section labels ── */
-  .label {
-    margin: 0 0 10px;
-    font-size: .875rem;       /* 14pt, 보조 색상 */
-    font-weight: 600;
-    color: var(--ink-2);
-  }
-
-  /* ── Topic cards (3 across) ── */
-  .topics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-
+  /* ══ Topic cards ═════════════════════════════════════════════ */
+  .topics { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
   .topic {
-    display: flex; flex-direction: column; gap: 4px;
-    min-height: 108px;
-    padding: 12px 10px;
-    text-align: left;
-    background: var(--panel);
-    border: 1px solid var(--rule);
-    border-radius: 12px;
-    box-shadow: var(--shadow-sm);
-    cursor: pointer;
+    display:flex; flex-direction:column; gap:8px;
+    min-height:116px; padding:12px 10px; text-align:left;
+    background:var(--panel); border:1px solid var(--rule);
+    border-radius:12px; box-shadow:var(--shadow-sm); cursor:pointer;
   }
-  .topic .ico { font-size: 1.35rem; line-height: 1.2; }
-  .topic .name { font-size: .9rem; font-weight: 700; letter-spacing: -.01em; }
-  .topic .sub { font-size: .72rem; line-height: 1.35; color: var(--ink-3); }
-  .topic:active { background: var(--guide-dim); }
+  /* 분야마다 색을 준다 — 장식이 아니라 식별 정보다 */
+  .topic[data-select="medical"] { --tc:var(--guide);    --tcd:var(--guide-dim); }
+  .topic[data-select="housing"] { --tc:var(--wing-ink); --tcd:var(--wing-dim); }
+  .topic[data-select="admin"]   { --tc:var(--iris);     --tcd:var(--iris-dim); }
+  .topic .tile {
+    width:38px; height:38px; border-radius:11px;
+    background:var(--tcd); color:var(--tc);
+    display:grid; place-items:center;
+  }
+  .topic .tile .ico { width:21px; height:21px; }
+  .topic .name { font-size:.9rem; font-weight:700; letter-spacing:-.01em; }
+  .topic .sub { font-size:.72rem; line-height:1.35; color:var(--ink-3); }
+  .topic:active { background:var(--tcd); }
+  .topic[aria-pressed="true"] { border-color:var(--tc); background:var(--tcd); box-shadow:none; }
+  .topic[aria-pressed="true"] .tile { background:var(--tc); color:#fff; }
+  .topic[aria-pressed="true"] .name { color:var(--tc); }
 
-  /* ── Common questions ── */
-  .qlist {
-    border: 1px solid var(--rule);
-    border-radius: 12px;
-    overflow: hidden;
-    background: var(--panel);
+  .tchip {
+    display:inline-flex; align-items:center; gap:7px; align-self:flex-start;
+    padding:4px 5px 4px 11px;
+    background:var(--panel); border:1px solid var(--tc, var(--guide));
+    border-radius:999px;
+    font-size:.8rem; font-weight:700; color:var(--tc, var(--guide));
   }
+  .tchip[data-topic="medical"] { --tc:var(--guide);    --tcd:var(--guide-dim); }
+  .tchip[data-topic="housing"] { --tc:var(--wing-ink); --tcd:var(--wing-dim); }
+  .tchip[data-topic="admin"]   { --tc:var(--iris);     --tcd:var(--iris-dim); }
+  .tchip .ico { width:15px; height:15px; }
+  .tchip button {
+    display:grid; place-items:center; width:24px; height:24px;
+    background:var(--tcd, var(--guide-dim)); color:var(--tc, var(--guide));
+    border:0; border-radius:50%; cursor:pointer;
+  }
+  .tchip button .ico { width:12px; height:12px; stroke-width:2.3; }
+
+  /* ══ Row list ════════════════════════════════════════════════ */
+  .qlist { border:1px solid var(--rule); border-radius:12px; overflow:hidden; background:var(--panel); }
   .q {
-    display: flex; align-items: center; gap: 12px;
-    width: 100%;
-    min-height: 56px;
-    padding: 12px 14px;
-    text-align: left;
-    background: none;
-    border: 0;
-    border-top: 1px solid var(--rule-soft);
-    font-size: .92rem;
-    cursor: pointer;
+    display:flex; align-items:center; gap:12px; width:100%;
+    min-height:56px; padding:12px 14px; text-align:left;
+    background:none; border:0; border-top:1px solid var(--rule-soft);
+    font-size:.92rem; cursor:pointer;
   }
-  .q:first-child { border-top: 0; }
-  .q .txt { flex: 1; line-height: 1.4; }
-  .q .arw { color: var(--ink-3); flex: none; }
-  .q:active { background: var(--guide-dim); }
+  .q:first-child { border-top:0; }
+  .q .txt { flex:1; line-height:1.4; }
+  .q .ico { width:16px; height:16px; color:var(--ink-3); }
+  .q:active { background:var(--guide-dim); }
 
-  /* ── Helper banner ── */
+  /* ══ Helper banner ═══════════════════════════════════════════ */
   .helper {
-    display: flex; align-items: center; gap: 12px;
-    width: 100%;
-    min-height: var(--tap);
-    padding: 14px 16px;
-    text-align: left;
-    background: var(--guide-dim);
-    border: 1px solid var(--rule);
-    border-radius: 12px;
-    cursor: pointer;
+    display:flex; align-items:center; gap:12px; width:100%;
+    min-height:var(--tap); padding:13px 14px; text-align:left;
+    background:var(--guide-dim); border:1px solid var(--rule);
+    border-radius:12px; cursor:pointer;
   }
-  .helper .ico { font-size: 1.2rem; }
-  .helper .body { flex: 1; }
-  .helper .t { font-size: .92rem; font-weight: 700; }
-  .helper .s { font-size: .8rem; color: var(--ink-2); }
-  .helper .arw { color: var(--guide); font-weight: 700; }
-
-  hr.rule { border: 0; border-top: 1px solid var(--rule-soft); margin: 0; }
+  .helper .tile {
+    width:32px; height:32px; border-radius:9px; flex:none;
+    background:var(--panel); color:var(--guide); border:1px solid var(--rule-soft);
+    display:grid; place-items:center;
+  }
+  .helper .tile .ico { width:18px; height:18px; }
+  .helper .body { flex:1; }
+  .helper .t { display:block; font-size:.92rem; font-weight:700; }
+  .helper .s { display:block; font-size:.8rem; color:var(--ink-2); }
+  .helper .ico.arw { width:16px; height:16px; color:var(--guide); }
 
   /* ══ Tab bar ═════════════════════════════════════════════════ */
   .tabs {
-    flex: none;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    border-top: 1px solid var(--rule);
-    background: var(--panel);
-    padding-bottom: env(safe-area-inset-bottom);
+    flex:none; display:none; grid-template-columns:repeat(4,1fr);
+    border-top:1px solid var(--rule); background:var(--panel);
+    padding-bottom:env(safe-area-inset-bottom);
   }
+  .tabs[data-show="true"] { display:grid; }
   .tab {
-    display: flex; flex-direction: column; align-items: center; gap: 2px;
-    min-height: 56px;
-    padding: 8px 4px;
-    background: none; border: 0;
-    font-size: .68rem; font-weight: 600;
-    color: var(--ink-3);
-    cursor: pointer;
+    position:relative;
+    display:flex; flex-direction:column; align-items:center; gap:3px;
+    min-height:56px; padding:8px 4px;
+    background:none; border:0; font-size:.68rem; font-weight:600;
+    color:var(--ink-3); cursor:pointer;
   }
-  .tab .ico { font-size: 1.15rem; line-height: 1.2; }
-  .tab[aria-current="page"] { color: var(--guide); }
+  .tab[aria-current="page"]::before {
+    content:''; position:absolute; top:-1px; left:50%; transform:translateX(-50%);
+    width:30px; height:3px; border-radius:0 0 3px 3px;
+    background:linear-gradient(90deg, var(--guide), var(--wing));
+  }
+  .tab .ico { width:21px; height:21px; }
+  .tab[aria-current="page"] { color:var(--guide); }
 
-  /* ══ Language sheet ══════════════════════════════════════════ */
+  /* ══ S02 · Chat ══════════════════════════════════════════════ */
+  .chat-log {
+    flex:1 1 auto; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch;
+    padding:18px var(--pad) 22px; display:flex; flex-direction:column; gap:14px;
+  }
+  .intro { display:flex; flex-direction:column; gap:12px; }
+  .intro p { margin:0; font-size:.88rem; line-height:1.5; color:var(--ink-2); }
+  .chips { display:flex; flex-direction:column; gap:8px; }
+  .chip {
+    text-align:left; padding:11px 13px;
+    background:var(--panel-2); border:1px solid var(--rule); border-radius:11px;
+    font-size:.87rem; line-height:1.4; color:var(--ink); cursor:pointer;
+  }
+  .chip:active { background:var(--guide-dim); }
+
+  .msg { max-width:88%; }
+  .msg.user {
+    align-self:flex-end; padding:10px 13px;
+    background:var(--guide); color:var(--guide-ink);
+    border-radius:14px 14px 5px 14px; font-size:.93rem;
+    white-space:pre-wrap; overflow-wrap:anywhere;
+  }
+  .msg.ai {
+    align-self:flex-start; max-width:96%; padding:13px 14px 11px;
+    background:var(--panel-2); border:1px solid var(--rule-soft);
+    border-radius:14px 14px 14px 5px; font-size:.92rem;
+  }
+  .msg.ai .body > *:first-child { margin-top:0; }
+  .msg.ai .body > *:last-child { margin-bottom:0; }
+  .msg.ai p { margin:0 0 9px; line-height:1.55; overflow-wrap:anywhere; }
+  .msg.ai p.h { margin:14px 0 7px; font-weight:800; font-size:.88rem; letter-spacing:-.01em; }
+  .msg.ai ul { margin:0 0 9px; padding-left:18px; }
+  .msg.ai li { margin-bottom:4px; line-height:1.5; overflow-wrap:anywhere; }
+  .msg.ai strong { font-weight:800; }
+  .msg.ai code {
+    padding:1px 5px; background:var(--panel);
+    border:1px solid var(--rule-soft); border-radius:5px; font-size:.88em;
+  }
+  .msg.ai .disclaimer {
+    display:flex; gap:6px; align-items:flex-start;
+    margin-top:10px; padding-top:9px; border-top:1px solid var(--rule);
+    font-size:.72rem; line-height:1.4; color:var(--ink-3);
+  }
+  .msg.ai .disclaimer .ico { width:13px; height:13px; margin-top:1px; }
+
+  .typing {
+    align-self:flex-start; display:flex; align-items:center; gap:9px;
+    padding:12px 15px; background:var(--panel-2);
+    border:1px solid var(--rule-soft); border-radius:14px 14px 14px 5px;
+    font-size:.82rem; color:var(--ink-3);
+  }
+  .typing .dots { display:flex; gap:5px; }
+  .typing i {
+    width:6px; height:6px; border-radius:50%; background:var(--ink-3);
+    animation:blink 1.3s infinite ease-in-out;
+  }
+  .typing i:nth-child(2) { animation-delay:.18s; }
+  .typing i:nth-child(3) { animation-delay:.36s; }
+  @keyframes blink { 0%,60%,100% { opacity:.28 } 30% { opacity:1 } }
+
+  /* 대화에서 나온 장소를 내 위치 기준으로 찾는다.
+     위치 권한은 사용자가 버튼을 누를 때만 요청한다 (PRD 11장). */
+  .place-ask {
+    align-self:flex-start; display:inline-flex; align-items:center; gap:7px;
+    margin-top:-4px; padding:9px 14px;
+    background:var(--iris-dim); border:1px solid var(--iris);
+    border-radius:999px;
+    font-size:.83rem; font-weight:700; color:var(--iris); cursor:pointer;
+  }
+  .place-ask .ico { width:15px; height:15px; }
+  .place-ask:disabled { opacity:.55; cursor:default; }
+
+  .places { align-self:stretch; display:flex; flex-direction:column; gap:8px; margin-top:-4px; }
+  .places .head {
+    display:flex; align-items:center; gap:7px;
+    font-size:.76rem; font-weight:700; color:var(--ink-3);
+  }
+  .places .head .ico { width:14px; height:14px; color:var(--iris); }
+  .place {
+    display:flex; align-items:center; gap:11px;
+    padding:11px 13px; background:var(--panel);
+    border:1px solid var(--rule); border-radius:12px;
+  }
+  .place .tile {
+    width:32px; height:32px; border-radius:9px; flex:none;
+    background:var(--iris-dim); color:var(--iris);
+    display:grid; place-items:center;
+  }
+  .place .tile .ico { width:17px; height:17px; }
+  .place .info { flex:1; min-width:0; }
+  .place .nm { display:block; font-size:.88rem; font-weight:700; line-height:1.35; }
+  .place .meta { display:block; margin-top:2px; font-size:.75rem; color:var(--ink-3); }
+  /* 지도 앱은 사람마다 다르다 — 셋 다 준다. 전부 키가 필요 없는 링크. */
+  .place { flex-wrap:wrap; }
+  .place .apps {
+    display:flex; gap:6px; flex:none;
+    width:100%; margin-top:4px;
+  }
+  .place .apps a {
+    flex:1; display:inline-flex; align-items:center; justify-content:center; gap:5px;
+    min-height:36px; padding:0 8px;
+    background:var(--panel-2); color:var(--ink);
+    border:1px solid var(--rule); border-radius:9px;
+    font-size:.79rem; font-weight:700; text-decoration:none;
+  }
+  .place .apps a.primary {
+    background:var(--iris); border-color:var(--iris); color:#fff;
+  }
+  .place .apps a .ico { width:13px; height:13px; }
+
+  /* 답변 기반 후속 질문 — 무엇을 더 물어야 할지 모르는 사용자를 위한 장치 */
+  .followup {
+    align-self:flex-start; max-width:96%;
+    display:flex; flex-wrap:wrap; gap:7px;
+    margin-top:-4px;
+  }
+  .fq {
+    padding:8px 13px; text-align:left;
+    background:var(--panel); border:1px solid var(--guide);
+    border-radius:999px;
+    font-size:.82rem; font-weight:600; line-height:1.3;
+    color:var(--guide); cursor:pointer;
+  }
+  .fq:active { background:var(--guide-dim); }
+
+  .emergency {
+    align-self:stretch; padding:13px 14px;
+    background:var(--alert-dim); border:1px solid var(--alert); border-radius:12px;
+  }
+  .emergency .top {
+    display:flex; align-items:center; gap:8px;
+    color:var(--alert); font-size:.9rem; font-weight:800;
+  }
+  .emergency p { margin:7px 0 11px; font-size:.84rem; line-height:1.45; color:var(--ink-2); }
+  .emergency .calls { display:flex; gap:8px; }
+
+  .call {
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
+    flex:1; min-height:var(--tap); padding:0 12px;
+    background:var(--alert); color:#fff; border-radius:10px;
+    font-size:.9rem; font-weight:700; text-decoration:none;
+  }
+  .call.ghost { background:var(--panel); color:var(--alert); border:1px solid var(--alert); }
+  .call .ico { width:16px; height:16px; }
+
+  .errbox {
+    align-self:stretch; padding:13px 14px;
+    background:var(--panel-2); border:1px solid var(--rule); border-radius:12px;
+  }
+  .errbox .top { display:flex; align-items:center; gap:8px; font-size:.9rem; font-weight:700; }
+  .errbox .top .ico { color:var(--alert); }
+  .errbox p { margin:7px 0 11px; font-size:.83rem; line-height:1.45; color:var(--ink-2); }
+  .errbox .acts { display:flex; gap:8px; }
+  .errbox button {
+    flex:1; min-height:var(--tap);
+    background:var(--guide); color:var(--guide-ink);
+    border:0; border-radius:10px; font-size:.9rem; font-weight:700; cursor:pointer;
+  }
+  .errbox a {
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
+    flex:1; min-height:var(--tap);
+    background:var(--panel); color:var(--ink);
+    border:1px solid var(--rule); border-radius:10px;
+    font-size:.9rem; font-weight:700; text-decoration:none;
+  }
+  .errbox a .ico { width:16px; height:16px; }
+
+  /* 에스컬레이션 CTA — PRD 6.5 조건 충족 시에만 나타난다 */
+  .escalate {
+    flex:none; display:none; align-items:center; gap:10px;
+    padding:11px var(--pad);
+    background:var(--guide-dim); border-top:1px solid var(--rule);
+    text-align:left; width:100%; cursor:pointer;
+  }
+  .escalate[data-show="true"] { display:flex; }
+  .escalate .ico { color:var(--guide); }
+  .escalate span { flex:1; font-size:.86rem; font-weight:700; color:var(--guide); }
+
+  .composer {
+    flex:none; border-top:1px solid var(--rule); background:var(--panel);
+    padding:10px var(--pad) calc(10px + env(safe-area-inset-bottom));
+  }
+  .composer .row { display:flex; align-items:flex-end; gap:9px; }
+  .composer textarea {
+    flex:1; min-height:var(--tap); max-height:132px; padding:11px 13px;
+    background:var(--panel-2); border:1px solid var(--rule); border-radius:12px;
+    font-size:.95rem; line-height:1.4; resize:none; overflow-y:auto;
+  }
+  .composer textarea::placeholder { color:var(--ink-3); }
+  .send {
+    display:grid; place-items:center; width:var(--tap); height:var(--tap); flex:none;
+    background:var(--guide); color:var(--guide-ink); border:0; border-radius:50%; cursor:pointer;
+  }
+  .send:disabled { opacity:.35; cursor:default; }
+  /* 사람에게 닿는 두 경로를 항상 같은 줄에 둔다.
+     크게 띄우지 않는다 — 늘 강조하면 'AI 가 못 푼다' 는 신호가 된다. */
+  .human-row {
+    display:flex; align-items:center; gap:12px; margin-top:9px;
+    font-size:.76rem;
+  }
+  .human-row .sep { width:1px; height:12px; background:var(--rule); flex:none; }
+  .hotline {
+    display:inline-flex; align-items:center; gap:6px;
+    color:var(--ink-3); text-decoration:none;
+    background:none; border:0; padding:0; cursor:pointer;
+    font-size:inherit;
+  }
+  .hotline .ico { width:13px; height:13px; }
+  .hotline b { color:var(--ink-2); }
+  .hotline.act { color:var(--guide); font-weight:700; }
+  .hotline.act .ico { color:var(--guide); }
+
+  .shake { animation:shake .28s }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }
+
+  /* ══ Forms (S03) ═════════════════════════════════════════════ */
+  .field { display:flex; flex-direction:column; gap:7px; }
+  .field > label { font-size:.84rem; font-weight:700; color:var(--ink-2); }
+  .field .hint { display:flex; gap:6px; align-items:flex-start; font-size:.74rem; line-height:1.4; color:var(--ink-3); }
+  .field .hint .ico { width:13px; height:13px; margin-top:1px; }
+  .field .err { font-size:.76rem; font-weight:600; color:var(--alert); }
+
+  .control {
+    width:100%; min-height:var(--tap); padding:11px 13px;
+    background:var(--panel-2); border:1px solid var(--rule); border-radius:11px;
+    font-size:.93rem;
+  }
+  select.control {
+    appearance:none;
+    background-image:linear-gradient(45deg,transparent 50%,var(--ink-3) 50%),
+                     linear-gradient(135deg,var(--ink-3) 50%,transparent 50%);
+    background-position:calc(100% - 17px) 50%, calc(100% - 12px) 50%;
+    background-size:5px 5px, 5px 5px; background-repeat:no-repeat;
+    padding-right:34px;
+  }
+  textarea.control { min-height:96px; line-height:1.5; resize:vertical; }
+  .control[aria-invalid="true"] { border-color:var(--alert); }
+
+  .segs { display:flex; gap:8px; }
+  .seg {
+    flex:1; min-height:var(--tap); padding:0 8px;
+    background:var(--panel-2); border:1px solid var(--rule); border-radius:11px;
+    font-size:.86rem; font-weight:600; cursor:pointer;
+  }
+  .seg[aria-pressed="true"] {
+    background:var(--guide-dim); border-color:var(--guide);
+    color:var(--guide); font-weight:800;
+  }
+
+  .ai-fill {
+    display:inline-flex; align-items:center; gap:6px; align-self:flex-start;
+    padding:6px 11px; background:var(--guide-dim);
+    border:0; border-radius:999px;
+    font-size:.76rem; font-weight:700; color:var(--guide); cursor:pointer;
+  }
+  .ai-fill .ico { width:13px; height:13px; }
+  .ai-fill:disabled { opacity:.45; cursor:default; }
+
+  /* ══ S04 · Result ════════════════════════════════════════════ */
+  .done {
+    display:flex; flex-direction:column; align-items:center; gap:9px;
+    padding:8px 0 4px; text-align:center;
+  }
+  .done .ring {
+    width:52px; height:52px; border-radius:50%;
+    background:var(--guide-dim); color:var(--guide);
+    display:grid; place-items:center;
+  }
+  .done .ring .ico { width:27px; height:27px; stroke-width:2; }
+  .done b { font-size:1.05rem; font-weight:800; }
+  .done p { margin:0; font-size:.86rem; color:var(--ink-2); }
+
+  .card {
+    padding:13px 14px; background:var(--panel);
+    border:1px solid var(--rule); border-radius:12px; box-shadow:var(--shadow-sm);
+  }
+  .cards { display:flex; flex-direction:column; gap:9px; }
+
+  .person { display:flex; gap:11px; }
+  .person .av {
+    width:38px; height:38px; border-radius:50%; flex:none;
+    background:var(--guide-dim); color:var(--guide);
+    display:grid; place-items:center;
+  }
+  .person .av .ico { width:20px; height:20px; }
+  .person .info { flex:1; min-width:0; }
+  .person .nm { display:block; font-size:.93rem; font-weight:700; }
+  .person .meta { display:block; margin-top:2px; font-size:.78rem; color:var(--ink-2); }
+  .person .say { display:block; margin-top:6px; font-size:.82rem; line-height:1.45; color:var(--ink-2); }
+
+  .demo-note {
+    display:flex; gap:7px; align-items:flex-start;
+    padding:10px 12px; margin-top:9px;
+    background:var(--panel-2); border:1px dashed var(--rule); border-radius:10px;
+    font-size:.75rem; line-height:1.45; color:var(--ink-3);
+  }
+  .demo-note .ico { width:14px; height:14px; margin-top:1px; }
+
+  /* ══ S05 · Orgs ══════════════════════════════════════════════ */
+  /* flex 항목의 min-width 기본값이 auto 라서, 이걸 0 으로 풀지 않으면
+     칩이 컨테이너를 밀어내 레이아웃이 깨진다. 좌우 패딩만큼 음수 마진을
+     줘서 화면 끝까지 스크롤되게 한다 — 패딩 안에서 잘리지 않는다. */
+  .filters {
+    display:flex; gap:7px; flex:none; min-width:0;
+    overflow-x:auto; overscroll-behavior-x:contain;
+    scrollbar-width:none; -ms-overflow-style:none;
+    margin:0 calc(-1 * var(--pad));
+    padding:0 var(--pad) 2px;
+  }
+  .filters::-webkit-scrollbar { display:none; }
+  .fchip {
+    display:inline-flex; align-items:center; gap:6px; flex:none;
+    min-height:38px; padding:0 13px;
+    background:var(--panel-2); border:1px solid var(--rule); border-radius:999px;
+    font-size:.84rem; font-weight:600; cursor:pointer; white-space:nowrap;
+  }
+  .fchip .ico { width:15px; height:15px; }
+  .fchip[aria-pressed="true"] {
+    background:var(--guide); border-color:var(--guide);
+    color:var(--guide-ink); font-weight:700;
+  }
+
+  .org { display:flex; gap:11px; align-items:flex-start; }
+  .org .info { flex:1; min-width:0; }
+  .org .nm { display:block; font-size:.93rem; font-weight:700; }
+  .org .nm em { font-style:normal; font-weight:600; color:var(--ink-3); }
+  .org .meta { display:block; margin-top:3px; font-size:.78rem; color:var(--ink-2); }
+  .org .hrs { display:block; margin-top:3px; font-size:.75rem; color:var(--ink-3); }
+  .org .tel {
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
+    min-height:38px; padding:0 13px; flex:none;
+    background:var(--guide); color:var(--guide-ink);
+    border-radius:10px; font-size:.86rem; font-weight:700; text-decoration:none;
+  }
+  .org.urgent .tel { background:var(--alert); }
+  .org .tel .ico { width:15px; height:15px; }
+
+  .badge {
+    display:inline-flex; align-items:center; gap:4px;
+    margin-top:6px; padding:2px 8px 2px 6px;
+    border-radius:999px; font-size:.7rem; font-weight:700;
+  }
+  .badge .dot { width:6px; height:6px; border-radius:50%; }
+  .badge.open { background:var(--guide-dim); color:var(--guide); }
+  .badge.open .dot { background:var(--guide); }
+  .badge.shut { background:var(--panel-2); color:var(--ink-3); border:1px solid var(--rule); }
+  .badge.shut .dot { background:var(--ink-3); }
+
+  .group-h {
+    display:flex; align-items:center; gap:7px; margin:0 0 9px;
+    font-size:.8rem; font-weight:800; color:var(--ink-2);
+    text-transform:uppercase; letter-spacing:.04em;
+  }
+  .group-h .ico { width:15px; height:15px; }
+  .group-h.urgent { color:var(--alert); }
+
+  /* ══ S07 · History ══════════════════════════════════════════ */
+  .hist-row {
+    display:flex; align-items:center; gap:11px; width:100%;
+    padding:12px 13px; text-align:left;
+    background:none; border:0; border-top:1px solid var(--rule-soft);
+    cursor:pointer;
+  }
+  .hist-row:first-child { border-top:0; }
+  .hist-row:active { background:var(--guide-dim); }
+  .hist-row .tile {
+    width:32px; height:32px; border-radius:9px; flex:none;
+    background:var(--tcd, var(--guide-dim)); color:var(--tc, var(--guide));
+    display:grid; place-items:center;
+  }
+  .hist-row[data-topic="medical"] { --tc:var(--guide);    --tcd:var(--guide-dim); }
+  .hist-row[data-topic="housing"] { --tc:var(--wing-ink); --tcd:var(--wing-dim); }
+  .hist-row[data-topic="admin"]   { --tc:var(--iris);     --tcd:var(--iris-dim); }
+  .hist-row .tile .ico { width:17px; height:17px; }
+  .hist-row .info { flex:1; min-width:0; }
+  .hist-row .ttl {
+    display:block; font-size:.9rem; font-weight:700; line-height:1.35;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .hist-row .sub { display:block; margin-top:2px; font-size:.75rem; color:var(--ink-3); }
+  .hist-row .del {
+    display:grid; place-items:center; width:34px; height:34px; flex:none;
+    background:none; border:0; border-radius:50%;
+    color:var(--ink-3); cursor:pointer;
+  }
+  .hist-row .del .ico { width:15px; height:15px; }
+
+  .empty {
+    display:flex; flex-direction:column; align-items:center; gap:9px;
+    padding:38px 20px; text-align:center;
+  }
+  .empty .ring {
+    width:52px; height:52px; border-radius:50%;
+    background:var(--panel-2); border:1px solid var(--rule); color:var(--ink-3);
+    display:grid; place-items:center;
+  }
+  .empty .ring .ico { width:24px; height:24px; }
+  .empty b { font-size:.95rem; font-weight:700; }
+  .empty p { margin:0; font-size:.83rem; line-height:1.5; color:var(--ink-3); max-width:250px; }
+
+  .danger-btn {
+    width:100%; min-height:var(--tap); padding:12px;
+    background:none; color:var(--alert);
+    border:1px solid var(--rule); border-radius:11px;
+    font-size:.9rem; font-weight:700; cursor:pointer;
+  }
+
+  /* ══ S06 · Settings ══════════════════════════════════════════ */
+  .set-row {
+    display:flex; align-items:center; gap:12px; width:100%;
+    min-height:52px; padding:12px 14px; text-align:left;
+    background:none; border:0; border-top:1px solid var(--rule-soft);
+    font-size:.91rem; cursor:pointer;
+  }
+  .set-row:first-child { border-top:0; }
+  .set-row .txt { flex:1; }
+  .set-row .val { font-size:.86rem; color:var(--ink-3); font-weight:600; }
+  .set-row .ico { width:16px; height:16px; color:var(--ink-3); }
+  .set-row.danger { color:var(--alert); }
+  .set-row.danger .ico { color:var(--alert); }
+  .set-row.static { cursor:default; align-items:flex-start; }
+  .set-row.static .txt { font-size:.85rem; line-height:1.45; color:var(--ink-2); }
+
+  .acc-body {
+    display:none; padding:2px 14px 14px;
+    font-size:.83rem; line-height:1.55; color:var(--ink-2);
+  }
+  .acc-body[data-open="true"] { display:block; }
+  .acc-body p { margin:9px 0 0; }
+  .acc-body ol { margin:9px 0 0; padding-left:19px; }
+  .acc-body li { margin-bottom:6px; }
+
+  .ver { margin:0; text-align:center; font-size:.74rem; color:var(--ink-3); }
+
+  /* ══ Sheet ═══════════════════════════════════════════════════ */
   .scrim {
-    position: absolute; inset: 0;
-    background: rgba(8, 14, 12, .45);
-    opacity: 0; pointer-events: none;
-    transition: opacity .18s ease;
-    z-index: 10;
+    position:absolute; inset:0; background:rgba(8,14,12,.45);
+    opacity:0; pointer-events:none; transition:opacity .18s ease; z-index:10;
   }
-  .scrim[data-open="true"] { opacity: 1; pointer-events: auto; }
-
+  .scrim[data-open="true"] { opacity:1; pointer-events:auto; }
   .sheet {
-    position: absolute; left: 0; right: 0; bottom: 0;
-    background: var(--panel);
-    border-top: 1px solid var(--rule);
-    border-radius: 18px 18px 0 0;
-    padding: 8px var(--pad) calc(20px + env(safe-area-inset-bottom));
-    transform: translateY(101%);
-    transition: transform .22s cubic-bezier(.2, .8, .2, 1);
-    z-index: 11;
+    position:absolute; left:0; right:0; bottom:0;
+    background:var(--panel); border-top:1px solid var(--rule);
+    border-radius:18px 18px 0 0;
+    padding:8px var(--pad) calc(20px + env(safe-area-inset-bottom));
+    transform:translateY(101%);
+    transition:transform .22s cubic-bezier(.2,.8,.2,1); z-index:11;
   }
-  .sheet[data-open="true"] { transform: translateY(0); }
-
-  .grip {
-    width: 38px; height: 4px; margin: 6px auto 14px;
-    background: var(--rule); border-radius: 2px;
-  }
-  .sheet h2 { margin: 0 0 4px; font-size: 1.05rem; font-weight: 800; }
-  .sheet .sub { margin: 0 0 14px; font-size: .85rem; color: var(--ink-3); }
+  .sheet[data-open="true"] { transform:translateY(0); }
+  .grip { width:38px; height:4px; margin:6px auto 14px; background:var(--rule); border-radius:2px; }
+  .sheet h2 { margin:0 0 4px; font-size:1.05rem; font-weight:800; }
+  .sheet .sub { margin:0 0 14px; font-size:.85rem; color:var(--ink-3); }
 
   .opt {
-    display: flex; align-items: center; gap: 12px;
-    width: 100%;
-    min-height: 52px;
-    margin-bottom: 8px;
-    padding: 0 14px;
-    text-align: left;
-    background: var(--panel-2);
-    border: 1px solid var(--rule);
-    border-radius: 12px;
-    font-size: .95rem; font-weight: 600;
-    cursor: pointer;
+    display:flex; align-items:center; gap:12px; width:100%;
+    min-height:52px; margin-bottom:8px; padding:0 14px; text-align:left;
+    background:var(--panel-2); border:1px solid var(--rule); border-radius:12px;
+    font-size:.95rem; font-weight:600; cursor:pointer;
   }
-  .opt .flag { font-size: 1.1rem; }
-  .opt .name { flex: 1; }
-  .opt .soon { font-size: .75rem; font-weight: 600; color: var(--ink-3); }
-  .opt .check { color: var(--guide); font-weight: 800; }
-  .opt[data-sel="true"] { border-color: var(--guide); background: var(--guide-dim); }
-  .opt[data-soon="true"] { opacity: .4; }   /* screen.md S00 — 40% opacity */
+  .opt .code {
+    min-width:34px; padding:3px 0; border-radius:6px;
+    background:var(--panel); border:1px solid var(--rule); color:var(--ink-2);
+    font-size:.72rem; font-weight:800; letter-spacing:.04em; text-align:center;
+  }
+  .opt .name { flex:1; }
+  .opt .soon { font-size:.75rem; font-weight:600; color:var(--ink-3); }
+  .opt .ico { width:17px; height:17px; color:var(--guide); }
+  .opt[data-sel="true"] { border-color:var(--guide); background:var(--guide-dim); }
+  .opt[data-sel="true"] .code { border-color:var(--guide); color:var(--guide); }
+  .opt[data-soon="true"] { opacity:.4; }
 
   /* ══ Toast ═══════════════════════════════════════════════════ */
   .toast {
-    position: absolute; left: 50%; bottom: 84px;
-    transform: translate(-50%, 8px);
-    max-width: calc(100% - 40px);
-    padding: 11px 16px;
-    background: var(--ink);
-    color: var(--ground);
-    border-radius: 10px;
-    font-size: .84rem; font-weight: 600;
-    text-align: center;
-    opacity: 0; pointer-events: none;
-    transition: opacity .18s ease, transform .18s ease;
-    z-index: 20;
+    position:absolute; left:50%; bottom:92px; transform:translate(-50%,8px);
+    max-width:calc(100% - 40px); padding:11px 16px;
+    background:var(--ink); color:var(--ground); border-radius:10px;
+    font-size:.84rem; font-weight:600; text-align:center;
+    opacity:0; pointer-events:none;
+    transition:opacity .18s ease, transform .18s ease; z-index:20;
   }
-  .toast[data-open="true"] { opacity: .96; transform: translate(-50%, 0); }
+  .toast[data-open="true"] { opacity:.96; transform:translate(-50%,0); }
 
   @media (prefers-reduced-motion: reduce) {
-    .sheet, .scrim, .toast { transition: none; }
+    .sheet, .scrim, .toast, .typing i, .shake { transition:none; animation:none; }
   }
 </style>
 </head>
 <body>
 
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <!-- 나비(Nabi) 마크. 좌우 날개를 청·황으로 나눠 이름 자체를 시그니처로 쓴다. -->
+  <symbol id="i-nabi" viewBox="0 0 24 24">
+    <path class="w1" d="M12 6.2C10.1 3.9 6.4 1.9 4 3.2 1.9 4.4 1.7 8 3.4 10.2c1.7 2.2 5 3 8.6 2.6z"/>
+    <path class="w1" d="M12 13.6c-3.4.1-6.4 1-7.4 3.1-1 2.2.4 4.6 2.8 4.8 2.3.2 4.2-2.2 4.6-5.5z"/>
+    <path class="w2" d="M12 6.2c1.9-2.3 5.6-4.3 8-3 2.1 1.2 2.3 4.8.6 7-1.7 2.2-5 3-8.6 2.6z"/>
+    <path class="w2" d="M12 13.6c3.4.1 6.4 1 7.4 3.1 1 2.2-.4 4.6-2.8 4.8-2.3.2-4.2-2.2-4.6-5.5z"/>
+    <path class="bd" d="M12 5.4v13.4"/>
+  </symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="8.5"/><path d="M3.6 9.2h16.8M3.6 14.8h16.8"/>
+    <path d="M12 3.5c-2.4 2.3-3.7 5.2-3.7 8.5s1.3 6.2 3.7 8.5c2.4-2.3 3.7-5.2 3.7-8.5S14.4 5.8 12 3.5z"/>
+  </symbol>
+  <symbol id="i-cross" viewBox="0 0 24 24">
+    <path d="M9.75 3.5h4.5v6.25h6.25v4.5h-6.25v6.25h-4.5v-6.25H3.5v-4.5h6.25z"/>
+  </symbol>
+  <symbol id="i-home-door" viewBox="0 0 24 24">
+    <path d="M3.5 10.6 12 4l8.5 6.6V20a1 1 0 0 1-1 1h-15a1 1 0 0 1-1-1z"/>
+    <path d="M10 21v-5.4a2 2 0 0 1 4 0V21"/>
+  </symbol>
+  <symbol id="i-bank" viewBox="0 0 24 24">
+    <path d="M12 4 3.5 9.5h17z"/><path d="M6 9.5V18M10 9.5V18M14 9.5V18M18 9.5V18"/>
+    <path d="M4.8 18h14.4"/><path d="M3.5 21h17"/>
+  </symbol>
+  <symbol id="i-people" viewBox="0 0 24 24">
+    <circle cx="9" cy="8.5" r="3.3"/><path d="M3 20.5a6 6 0 0 1 12 0"/>
+    <path d="M16.4 5.7a3.3 3.3 0 0 1 0 5.6"/><path d="M18 15.3a6 6 0 0 1 3 5.2"/>
+  </symbol>
+  <symbol id="i-person" viewBox="0 0 24 24">
+    <circle cx="12" cy="8.2" r="3.6"/><path d="M4.8 20.6a7.2 7.2 0 0 1 14.4 0"/>
+  </symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24">
+    <path d="M7 3.5h2.6L11 7.3l-2 1.4a11.5 11.5 0 0 0 6.3 6.3l1.4-2 3.8 1.4V17a2.5 2.5 0 0 1-2.5 2.5A15.5 15.5 0 0 1 4.5 6 2.5 2.5 0 0 1 7 3.5z"/>
+  </symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="3.2"/>
+    <path d="M12 2.9v2.5M12 18.6v2.5M2.9 12h2.5M18.6 12h2.5M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/>
+  </symbol>
+  <symbol id="i-house" viewBox="0 0 24 24">
+    <path d="M3.5 10.7 12 4l8.5 6.7V20a1 1 0 0 1-1 1h-15a1 1 0 0 1-1-1z"/>
+    <path d="M9.5 21v-6.5h5V21"/>
+  </symbol>
+  <symbol id="i-mic" viewBox="0 0 24 24">
+    <rect x="9" y="3" width="6" height="10" rx="3"/>
+    <path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><path d="M12 18v3"/>
+  </symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24">
+    <path d="M12 21.5s7-6.1 7-11.2A7 7 0 0 0 5 10.3c0 5.1 7 11.2 7 11.2z"/>
+    <circle cx="12" cy="10" r="2.6"/>
+  </symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="8.6"/><path d="M12 7.3V12l3.5 2.2"/>
+  </symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+  <symbol id="i-caret" viewBox="0 0 24 24"><path d="M5 9l7 7 7-7"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M12 19.5V5"/><path d="M5.5 11.5 12 5l6.5 6.5"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="9"/><path d="M12 11.2v5.3"/>
+    <circle cx="12" cy="7.8" r=".95" fill="currentColor" stroke="none"/>
+  </symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24">
+    <path d="M12 4.2 21.2 19.8H2.8z"/><path d="M12 10v4"/>
+    <circle cx="12" cy="16.9" r=".95" fill="currentColor" stroke="none"/>
+  </symbol>
+  <symbol id="i-siren" viewBox="0 0 24 24">
+    <path d="M5.5 19.5v-5a6.5 6.5 0 0 1 13 0v5z"/><path d="M3.5 19.5h17"/>
+    <path d="M12 4.6V2.5M4.6 7 3.2 5.6M19.4 7l1.4-1.4"/>
+  </symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24">
+    <path d="M4.5 6.5h15"/><path d="M9.5 6.5V4.2h5v2.3"/>
+    <path d="M6.5 6.5 7.4 20a1 1 0 0 0 1 .9h7.2a1 1 0 0 0 1-.9l.9-13.5"/>
+  </symbol>
+  <symbol id="i-sparkle" viewBox="0 0 24 24">
+    <path d="M11 3.2l1.6 4.2 4.2 1.6-4.2 1.6L11 14.8l-1.6-4.2L5.2 9l4.2-1.6z"/>
+    <path d="M18.2 15l.7 1.9 1.9.7-1.9.7-.7 1.9-.7-1.9-1.9-.7 1.9-.7z"/>
+  </symbol>
+</svg>
+
 <div class="stage">
   <div class="phone">
     <div class="band"></div>
+    <div class="stack">
 
-    <!-- ── Header — 3.1 (S01: 🌏 Nabi / — / 🇺🇸 EN ▾) ─────────── -->
-    <header class="hdr">
-      <div class="brand">
-        <span class="glyph" aria-hidden="true">🌏</span>
-        <b>Nabi</b>
-      </div>
-      <button class="lang-btn" id="langBtn" aria-haspopup="dialog" aria-expanded="false">
-        <span class="flag" id="langFlag" aria-hidden="true">🇺🇸</span>
-        <span id="langCode">EN</span>
-        <span class="caret" aria-hidden="true">▾</span>
-        <span class="sr" id="langSr">Change language</span>
-      </button>
-    </header>
-
-    <!-- ── Body ───────────────────────────────────────────────── -->
-    <main class="scroll">
-
-      <section class="ask">
-        <h1 class="hero" data-i18n="hero"></h1>
-
-        <!-- 홈에서 직접 입력받지 않는다 (screen.md S01 요소 명세) -->
-        <button class="ask-field" data-go="S02" data-topic="auto">
-          <span class="ph" data-i18n="askPlaceholder"></span>
-          <span class="mic" aria-hidden="true">🎤</span>
-          <span class="sr" data-i18n="micSoon"></span>
-        </button>
-
-        <button class="cta" data-go="S02" data-topic="auto" data-i18n="askCta"></button>
-
+    <!-- ══════════════ S00 · 언어 선택 온보딩 ══════════════ -->
+    <div class="view" id="viewOnboard">
+      <div class="onboard">
+        <div class="top">
+          <svg class="logo" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-nabi"/></svg>
+          <h1>Choose language<small>언어를 선택하세요</small></h1>
+        </div>
+        <div id="onbOpts"></div>
+        <div class="grow"></div>
         <p class="privacy">
-          <span aria-hidden="true">ⓘ</span>
+          <svg class="ico" aria-hidden="true"><use href="#i-info"/></svg>
           <span data-i18n="privacy"></span>
         </p>
-      </section>
+        <button class="cta" id="onbGo"><span data-i18n="continue"></span></button>
+      </div>
+    </div>
 
-      <section>
-        <p class="label" data-i18n="topicsLabel"></p>
-        <div class="topics">
-          <button class="topic" data-go="S02" data-topic="medical">
-            <span class="ico" aria-hidden="true">🏥</span>
-            <span class="name" data-i18n="t.medical.name"></span>
-            <span class="sub" data-i18n="t.medical.sub"></span>
-          </button>
-          <button class="topic" data-go="S02" data-topic="housing">
-            <span class="ico" aria-hidden="true">🏠</span>
-            <span class="name" data-i18n="t.housing.name"></span>
-            <span class="sub" data-i18n="t.housing.sub"></span>
-          </button>
-          <button class="topic" data-go="S02" data-topic="admin">
-            <span class="ico" aria-hidden="true">🏛️</span>
-            <span class="name" data-i18n="t.admin.name"></span>
-            <span class="sub" data-i18n="t.admin.sub"></span>
-          </button>
+    <!-- ══════════════ S01 · 홈 ══════════════ -->
+    <div class="view" id="viewHome">
+      <header class="hdr">
+        <div class="brand">
+          <svg class="logo" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-nabi"/></svg>
+          <b>Nabi</b>
         </div>
-      </section>
+        <button class="lang-btn js-lang" aria-haspopup="dialog" aria-expanded="false">
+          <svg class="ico" aria-hidden="true"><use href="#i-globe"/></svg>
+          <span class="js-lang-code num">EN</span>
+          <svg class="ico caret" aria-hidden="true"><use href="#i-caret"/></svg>
+        </button>
+      </header>
 
-      <section>
-        <p class="label" data-i18n="commonLabel"></p>
-        <div class="qlist">
-          <button class="q" data-go="S02" data-topic="housing">
-            <span class="txt" data-i18n="q1"></span>
-            <span class="arw" aria-hidden="true">→</span>
-          </button>
-          <button class="q" data-go="S02" data-topic="admin">
-            <span class="txt" data-i18n="q2"></span>
-            <span class="arw" aria-hidden="true">→</span>
-          </button>
-          <button class="q" data-go="S02" data-topic="medical">
-            <span class="txt" data-i18n="q3"></span>
-            <span class="arw" aria-hidden="true">→</span>
-          </button>
-        </div>
-      </section>
+      <main class="scroll">
+        <section class="ask-card">
+          <h1 class="hero" data-i18n="hero"></h1>
+          <div id="tchipSlot"></div>
 
-      <hr class="rule">
+          <!-- 여기서 직접 입력한다. 아래 버튼은 이 내용을 보내는 역할만. -->
+          <div class="ask-field">
+            <textarea id="homeInput" rows="1" enterkeyhint="send"></textarea>
+            <button class="mic" type="button" id="homeMic">
+              <svg class="ico" aria-hidden="true"><use href="#i-mic"/></svg>
+              <span class="sr" data-i18n="micLabel"></span>
+            </button>
+          </div>
 
-      <!-- AI를 거치지 않고 바로 사람을 찾는 경로 → S03 (분야 미지정) -->
-      <button class="helper" data-go="S03" data-topic="none">
-        <span class="ico" aria-hidden="true">🗣️</span>
-        <span class="body">
-          <span class="t" data-i18n="helperTitle"></span><br>
-          <span class="s" data-i18n="helperSub"></span>
+          <button class="cta" id="homeSend">
+            <svg class="ico" aria-hidden="true"><use href="#i-sparkle"/></svg>
+            <span data-i18n="askCta"></span>
+          </button>
+
+          <p class="privacy">
+            <svg class="ico" aria-hidden="true"><use href="#i-info"/></svg>
+            <span data-i18n="privacy"></span>
+          </p>
+        </section>
+
+        <section>
+          <p class="label" data-i18n="topicsLabel"></p>
+          <div class="topics">
+            <button class="topic" data-select="medical" aria-pressed="false">
+              <span class="tile" aria-hidden="true"><svg class="ico"><use href="#i-cross"/></svg></span>
+              <span class="name" data-i18n="t.medical.name"></span>
+              <span class="sub" data-i18n="t.medical.sub"></span>
+            </button>
+            <button class="topic" data-select="housing" aria-pressed="false">
+              <span class="tile" aria-hidden="true"><svg class="ico"><use href="#i-home-door"/></svg></span>
+              <span class="name" data-i18n="t.housing.name"></span>
+              <span class="sub" data-i18n="t.housing.sub"></span>
+            </button>
+            <button class="topic" data-select="admin" aria-pressed="false">
+              <span class="tile" aria-hidden="true"><svg class="ico"><use href="#i-bank"/></svg></span>
+              <span class="name" data-i18n="t.admin.name"></span>
+              <span class="sub" data-i18n="t.admin.sub"></span>
+            </button>
+          </div>
+        </section>
+
+        <section>
+          <p class="label" data-i18n="commonLabel"></p>
+          <div class="qlist" id="qlist"></div>
+        </section>
+
+        <hr class="rule">
+
+        <button class="helper" data-go="request">
+          <span class="tile" aria-hidden="true"><svg class="ico"><use href="#i-people"/></svg></span>
+          <span class="body">
+            <span class="t" data-i18n="helperTitle"></span>
+            <span class="s" data-i18n="helperSub"></span>
+          </span>
+          <svg class="ico arw" aria-hidden="true"><use href="#i-arrow"/></svg>
+        </button>
+      </main>
+    </div>
+
+    <!-- ══════════════ S02 · AI 상담 ══════════════ -->
+    <div class="view" id="viewChat">
+      <header class="hdr">
+        <button class="icon-btn" data-back="home">
+          <svg class="ico" aria-hidden="true"><use href="#i-back"/></svg>
+          <span class="sr" data-i18n="back"></span>
+        </button>
+        <span class="hdr-title">
+          <svg class="ico" id="chatIcon" aria-hidden="true"><use href="#i-sparkle"/></svg>
+          <span id="chatTitle"></span>
         </span>
-        <span class="arw" aria-hidden="true">→</span>
+        <button class="lang-btn js-lang" aria-haspopup="dialog" aria-expanded="false">
+          <span class="js-lang-code num">EN</span>
+          <svg class="ico caret" aria-hidden="true"><use href="#i-caret"/></svg>
+        </button>
+      </header>
+
+      <div class="chat-log" id="chatLog"></div>
+
+      <button class="escalate" id="escalate" data-go="request">
+        <svg class="ico" aria-hidden="true"><use href="#i-people"/></svg>
+        <span data-i18n="escalate"></span>
+        <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg>
       </button>
 
-    </main>
+      <div class="composer">
+        <div class="row">
+          <textarea id="input" rows="1" enterkeyhint="send"></textarea>
+          <button class="mic" type="button" id="chatMic">
+            <svg class="ico" aria-hidden="true"><use href="#i-mic"/></svg>
+            <span class="sr" data-i18n="micLabel"></span>
+          </button>
+          <button class="send" id="sendBtn">
+            <svg class="ico" aria-hidden="true"><use href="#i-send"/></svg>
+            <span class="sr" data-i18n="sendSr"></span>
+          </button>
+        </div>
+        <div class="human-row">
+          <button class="hotline act" type="button" id="chatHelper">
+            <svg class="ico" aria-hidden="true"><use href="#i-people"/></svg>
+            <span data-i18n="helperLink"></span>
+          </button>
+          <span class="sep" aria-hidden="true"></span>
+          <a class="hotline" href="tel:1345">
+            <svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg>
+            <span data-i18n="hotlinePre"></span>&nbsp;<b class="num">1345</b>
+          </a>
+        </div>
+      </div>
+    </div>
 
-    <!-- ── Tab bar — 2장 (S01 / S05 / S06) ────────────────────── -->
-    <nav class="tabs">
-      <button class="tab" aria-current="page">
-        <span class="ico" aria-hidden="true">🏠</span>
+    <!-- ══════════════ S03 · 연결 요청서 ══════════════ -->
+    <div class="view" id="viewRequest">
+      <header class="hdr">
+        <button class="icon-btn" data-back="auto">
+          <svg class="ico" aria-hidden="true"><use href="#i-back"/></svg>
+          <span class="sr" data-i18n="back"></span>
+        </button>
+        <span class="hdr-title">
+          <svg class="ico" aria-hidden="true"><use href="#i-people"/></svg>
+          <span data-i18n="reqTitle"></span>
+        </span>
+      </header>
+
+      <main class="scroll">
+        <p class="privacy" style="margin-top:-6px">
+          <svg class="ico" aria-hidden="true"><use href="#i-info"/></svg>
+          <span data-i18n="reqLead"></span>
+        </p>
+
+        <div class="field">
+          <label for="fLang" data-i18n="fLang"></label>
+          <select class="control" id="fLang"></select>
+          <span class="hint">
+            <svg class="ico" aria-hidden="true"><use href="#i-info"/></svg>
+            <span data-i18n="fLangHint"></span>
+          </span>
+        </div>
+
+        <div class="field">
+          <label for="fTopic" data-i18n="fTopic"></label>
+          <select class="control" id="fTopic"></select>
+        </div>
+
+        <div class="field">
+          <label for="fNeed" data-i18n="fNeed"></label>
+          <textarea class="control" id="fNeed"></textarea>
+          <button class="ai-fill" id="aiFill">
+            <svg class="ico" aria-hidden="true"><use href="#i-sparkle"/></svg>
+            <span data-i18n="aiFill"></span>
+          </button>
+          <span class="err" id="eNeed" hidden></span>
+        </div>
+
+        <div class="field">
+          <label data-i18n="fWhen"></label>
+          <div class="segs" id="fWhen"></div>
+        </div>
+
+        <div class="field">
+          <label for="fContact" data-i18n="fContact"></label>
+          <input class="control" id="fContact" type="text" autocomplete="off">
+          <span class="hint">
+            <svg class="ico" aria-hidden="true"><use href="#i-info"/></svg>
+            <span data-i18n="fContactHint"></span>
+          </span>
+          <span class="err" id="eContact" hidden></span>
+        </div>
+
+        <button class="cta" id="reqSend"><span data-i18n="reqSend"></span></button>
+
+        <hr class="rule">
+        <a class="hotline" href="tel:1345">
+          <svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg>
+          <span data-i18n="hotlinePre"></span>&nbsp;<b class="num">1345</b>
+        </a>
+      </main>
+    </div>
+
+    <!-- ══════════════ S04 · 매칭 결과 ══════════════ -->
+    <div class="view" id="viewResult">
+      <header class="hdr">
+        <button class="icon-btn" data-back="home">
+          <svg class="ico" aria-hidden="true"><use href="#i-back"/></svg>
+          <span class="sr" data-i18n="back"></span>
+        </button>
+        <span class="hdr-title">
+          <svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>
+          <span data-i18n="resTitle"></span>
+        </span>
+      </header>
+
+      <main class="scroll">
+        <div class="done">
+          <span class="ring" aria-hidden="true"><svg class="ico"><use href="#i-check"/></svg></span>
+          <b data-i18n="resDone"></b>
+          <p data-i18n="resWithin"></p>
+        </div>
+
+        <section>
+          <p class="group-h">
+            <svg class="ico" aria-hidden="true"><use href="#i-people"/></svg>
+            <span data-i18n="resHelpers"></span>
+          </p>
+          <div class="cards" id="resHelperList"></div>
+          <div class="demo-note">
+            <svg class="ico" aria-hidden="true"><use href="#i-info"/></svg>
+            <span data-i18n="demoNote"></span>
+          </div>
+        </section>
+
+        <section>
+          <p class="group-h">
+            <svg class="ico" aria-hidden="true"><use href="#i-bank"/></svg>
+            <span data-i18n="resOrgs"></span>
+          </p>
+          <div class="cards" id="resOrgList"></div>
+        </section>
+
+        <button class="cta" data-back="home"><span data-i18n="resDoneBtn"></span></button>
+      </main>
+    </div>
+
+    <!-- ══════════════ S05 · 기관 목록 ══════════════ -->
+    <div class="view" id="viewOrgs">
+      <header class="hdr">
+        <span class="hdr-title" style="padding-left:2px">
+          <svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg>
+          <span data-i18n="orgsTitle"></span>
+        </span>
+        <button class="lang-btn js-lang" aria-haspopup="dialog" aria-expanded="false">
+          <svg class="ico" aria-hidden="true"><use href="#i-globe"/></svg>
+          <span class="js-lang-code num">EN</span>
+          <svg class="ico caret" aria-hidden="true"><use href="#i-caret"/></svg>
+        </button>
+      </header>
+
+      <main class="scroll">
+        <div class="filters" id="orgFilters"></div>
+        <div id="orgGroups"></div>
+      </main>
+    </div>
+
+    <!-- ══════════════ S07 · 대화 기록 ══════════════ -->
+    <div class="view" id="viewHistory">
+      <header class="hdr">
+        <span class="hdr-title" style="padding-left:2px">
+          <svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg>
+          <span data-i18n="histTitle"></span>
+        </span>
+      </header>
+      <main class="scroll">
+        <p class="privacy" style="margin-top:-6px">
+          <svg class="ico" aria-hidden="true"><use href="#i-info"/></svg>
+          <span data-i18n="histLead"></span>
+        </p>
+        <div id="histBody"></div>
+      </main>
+    </div>
+
+    <!-- ══════════════ S06 · 설정 ══════════════ -->
+    <div class="view" id="viewSettings">
+      <header class="hdr">
+        <span class="hdr-title" style="padding-left:2px">
+          <svg class="ico" aria-hidden="true"><use href="#i-gear"/></svg>
+          <span data-i18n="setTitle"></span>
+        </span>
+      </header>
+
+      <main class="scroll">
+        <section>
+          <p class="label" data-i18n="setLangSec"></p>
+          <div class="qlist">
+            <button class="set-row js-lang">
+              <svg class="ico" aria-hidden="true"><use href="#i-globe"/></svg>
+              <span class="txt" data-i18n="setLang"></span>
+              <span class="val js-lang-name"></span>
+              <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg>
+            </button>
+          </div>
+        </section>
+
+        <section>
+          <p class="label" data-i18n="setPrivSec"></p>
+          <div class="qlist">
+            <div class="set-row static">
+              <svg class="ico" aria-hidden="true"><use href="#i-info"/></svg>
+              <span class="txt" data-i18n="setPrivBody"></span>
+            </div>
+            <button class="set-row danger" id="clearChat">
+              <svg class="ico" aria-hidden="true"><use href="#i-trash"/></svg>
+              <span class="txt" data-i18n="setClear"></span>
+            </button>
+          </div>
+        </section>
+
+        <section>
+          <p class="label" data-i18n="setAboutSec"></p>
+          <div class="qlist">
+            <button class="set-row" data-acc="accHow">
+              <svg class="ico" aria-hidden="true"><use href="#i-sparkle"/></svg>
+              <span class="txt" data-i18n="setHow"></span>
+              <svg class="ico" aria-hidden="true"><use href="#i-caret"/></svg>
+            </button>
+            <div class="acc-body" id="accHow">
+              <ol>
+                <li data-i18n="how1"></li>
+                <li data-i18n="how2"></li>
+                <li data-i18n="how3"></li>
+              </ol>
+            </div>
+            <button class="set-row" data-acc="accDis">
+              <svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg>
+              <span class="txt" data-i18n="setDis"></span>
+              <svg class="ico" aria-hidden="true"><use href="#i-caret"/></svg>
+            </button>
+            <div class="acc-body" id="accDis">
+              <p data-i18n="dis1"></p>
+              <p data-i18n="dis2"></p>
+            </div>
+          </div>
+        </section>
+
+        <p class="ver">Nabi · v1.0.0 (MVP)</p>
+      </main>
+    </div>
+
+    </div><!-- /.stack -->
+
+    <nav class="tabs" id="tabs">
+      <button class="tab" data-tab="home">
+        <svg class="ico" aria-hidden="true"><use href="#i-house"/></svg>
         <span data-i18n="tabHome"></span>
       </button>
-      <button class="tab" data-go="S05">
-        <span class="ico" aria-hidden="true">📞</span>
+      <button class="tab" data-tab="history">
+        <svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg>
+        <span data-i18n="tabHistory"></span>
+      </button>
+      <button class="tab" data-tab="orgs">
+        <svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg>
         <span data-i18n="tabOrgs"></span>
       </button>
-      <button class="tab" data-go="S06">
-        <span class="ico" aria-hidden="true">⚙️</span>
+      <button class="tab" data-tab="settings">
+        <svg class="ico" aria-hidden="true"><use href="#i-gear"/></svg>
         <span data-i18n="tabSettings"></span>
       </button>
     </nav>
 
-    <!-- ── Language sheet ─────────────────────────────────────── -->
     <div class="scrim" id="scrim"></div>
     <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
       <div class="grip" aria-hidden="true"></div>
@@ -502,186 +1303,1450 @@
 
 <script>
 /* ══════════════════════════════════════════════════════════════
-   i18n — PRD 7장: UI 문자열은 하드코딩하지 않고 리소스로 분리한다.
-   언어 추가 = 아래 객체에 항목 추가 + LANGS 에 등록.
+   Nabi — 외국인 생활 지원 서비스 · v1
+   UI 문자열은 하드코딩하지 않고 리소스로 분리한다 (PRD 7장).
    ══════════════════════════════════════════════════════════════ */
+
 const LANGS = [
-  { id: 'en', code: 'EN', flag: '🇺🇸', label: 'English',    ready: true  },
-  { id: 'ko', code: 'KO', flag: '🇰🇷', label: '한국어',      ready: true  },
-  { id: 'vi', code: 'VI', flag: '🇻🇳', label: 'Tiếng Việt', ready: false },
-  { id: 'zh', code: 'ZH', flag: '🇨🇳', label: '中文',        ready: false },
+  { id:'en', code:'EN', label:'English',    ready:true  },
+  { id:'ko', code:'KO', label:'한국어',      ready:true  },
+  { id:'vi', code:'VI', label:'Tiếng Việt', ready:false },
+  { id:'zh', code:'ZH', label:'中文',        ready:false },
+];
+
+const TOPICS = ['medical', 'housing', 'admin'];
+const TOPIC_ICON = { auto:'i-nabi', medical:'i-cross', housing:'i-home-door', admin:'i-bank' };
+
+/* ── 실제 기관 정보. 확인된 번호만 넣는다 ─────────────────── */
+const WD = [1,2,3,4,5];   // 월~금
+const ORGS = [
+  { id:'119',  cat:'emergency', tel:'119',  sub:'119', h24:true,
+    nm:{en:'Fire & Ambulance', ko:'화재 · 구급'},
+    note:{en:'Free. Insurance is not required.', ko:'무료. 보험이 없어도 이용할 수 있습니다.'} },
+  { id:'112',  cat:'emergency', tel:'112',  sub:'112', h24:true,
+    nm:{en:'Police', ko:'경찰'},
+    note:{en:'Crime, accidents, immediate danger.', ko:'범죄 · 사고 · 급박한 위험.'} },
+  { id:'1339', cat:'emergency', tel:'1339', sub:'1339', h24:true,
+    nm:{en:'Emergency Medical Information', ko:'응급의료정보센터'},
+    note:{en:'Which hospital is open right now.', ko:'지금 문 연 병원 안내.'} },
+
+  { id:'1345', cat:'admin', tel:'1345', sub:'1345', days:WD, from:9*60, to:22*60,
+    nm:{en:'Immigration Contact Center', ko:'외국인종합안내센터'},
+    note:{en:'20 languages, free. Visa and residence questions.', ko:'20개 언어, 무료. 비자 · 체류 문의.'} },
+  { id:'1330', cat:'admin', tel:'1330', sub:'1330', h24:true,
+    nm:{en:'Korea Travel Hotline', ko:'관광통역안내'},
+    note:{en:'24h interpretation in several languages.', ko:'24시간 다국어 통역 안내.'} },
+  { id:'120',  cat:'admin', tel:'120', sub:'120', days:WD, from:9*60, to:19*60,
+    nm:{en:'Local Government Hotline', ko:'지자체 민원 상담'},
+    note:{en:'Seoul and several other cities.', ko:'서울 등 일부 지자체.'} },
+  { id:'gov24',cat:'admin', tel:'1588-2188', sub:'1588-2188', days:WD, from:9*60, to:18*60,
+    nm:{en:'Gov24 Service Center', ko:'정부24 고객센터'},
+    note:{en:'Online issuance of civil documents.', ko:'온라인 민원 서류 발급.'} },
+
+  { id:'132',  cat:'housing', tel:'132', sub:'132', days:WD, from:9*60, to:18*60,
+    nm:{en:'Korea Legal Aid Corporation', ko:'대한법률구조공단'},
+    note:{en:'Free legal help. Deposits, contracts, disputes.', ko:'무료 법률 상담. 보증금 · 계약 · 분쟁.'} },
+  { id:'hug',  cat:'housing', tel:'1566-9009', sub:'1566-9009', days:WD, from:9*60, to:18*60,
+    nm:{en:'HUG Housing Guarantee', ko:'주택도시보증공사'},
+    note:{en:'Deposit return guarantee.', ko:'전세보증금 반환보증.'} },
+
+  { id:'nhis', cat:'medical', tel:'1577-1000', sub:'1577-1000', days:WD, from:9*60, to:18*60,
+    nm:{en:'National Health Insurance Service', ko:'국민건강보험공단'},
+    note:{en:'Eligibility, premiums, coverage.', ko:'가입 자격 · 보험료 · 보장 범위.'} },
+];
+
+/* ── 지원자 시드 데이터 — MVP 는 시뮬레이션이다 (PRD 8.2) ──── */
+const HELPERS = [
+  { id:'h1', nm:'Nguyen ○○', langs:['vi'], topics:['housing','admin'], yrs:3,
+    say:{en:'I can help you understand the contract process.', ko:'계약 절차를 이해하시도록 도와드릴 수 있어요.'} },
+  { id:'h2', nm:'Tran ○○',   langs:['vi'], topics:['medical'], yrs:5,
+    say:{en:'I have been to hospitals here many times.', ko:'병원 동행 경험이 많습니다.'} },
+  { id:'h3', nm:'Wang ○○',   langs:['zh'], topics:['housing','medical'], yrs:4,
+    say:{en:'I can go with you to the real estate office.', ko:'부동산에 함께 갈 수 있습니다.'} },
+  { id:'h4', nm:'Sarah ○○',  langs:['en'], topics:['admin','housing'], yrs:6,
+    say:{en:'I have handled visa paperwork many times.', ko:'비자 서류 업무를 여러 번 처리했습니다.'} },
+  { id:'h5', nm:'Aisha ○○',  langs:['en'], topics:['medical','admin'], yrs:2,
+    say:{en:'I can interpret at the clinic or the office.', ko:'병원이나 관공서에서 통역할 수 있습니다.'} },
+  { id:'h6', nm:'Kim ○○',    langs:['ko'], topics:['housing','admin','medical'], yrs:9,
+    say:{en:'I can explain the Korean paperwork step by step.', ko:'한국 서류 절차를 하나씩 설명해드릴 수 있습니다.'} },
 ];
 
 const STRINGS = {
   en: {
-    hero: 'How can we help you\nwith life in Korea?',
-    askPlaceholder: 'Ask anything...',
-    micSoon: 'Voice input — coming soon',
-    askCta: 'Ask AI',
-    privacy: "We don't store your chats or personal information.",
-    topicsLabel: 'Or choose a topic',
-    't.medical.name': 'Medical', 't.medical.sub': 'Hospital, pharmacy, insurance',
-    't.housing.name': 'Housing', 't.housing.sub': 'Contract, deposit, moving',
-    't.admin.name': 'Admin',     't.admin.sub': 'Visa, documents, reports',
-    commonLabel: 'Common questions',
-    q1: 'Can foreigners sign a jeonse contract?',
-    q2: 'How do I report an address change?',
-    q3: 'Is health insurance available to foreigners?',
-    helperTitle: 'Need to talk to a person?',
-    helperSub: 'Connect with a helper',
-    tabHome: 'Home', tabOrgs: 'Orgs', tabSettings: 'Settings',
-    sheetTitle: 'Choose language',
-    sheetSub: "You can change this anytime.",
-    soon: 'soon',
-    toastSoon: 'Coming soon',
-    nav: { S02: 'Opens AI chat (S02) — topic: %s', S03: 'Opens Request Help (S03)',
-           S05: 'Opens Organizations (S05)', S06: 'Opens Settings (S06)' },
+    continue:'Continue',
+    hero:'How can we help you\nwith life in Korea?',
+    askPlaceholder:'Ask anything...',
+    micLabel:'Voice input',
+    voiceListening:'Listening... speak now.',
+    voiceUnsupported:'Voice input is not supported in this browser. Try Chrome or Safari.',
+    voiceDenied:'Microphone access was blocked. Allow it in your browser settings.',
+    voiceFail:"Couldn't hear that. Please try again.",
+    askCta:'Ask AI',
+    privacy:'Your chats stay on this device. Nothing is kept on a server.',
+    topicsLabel:'Or choose a topic',
+    't.medical.name':'Medical', 't.medical.sub':'Hospital, pharmacy, insurance',
+    't.housing.name':'Housing', 't.housing.sub':'Contract, deposit, moving',
+    't.admin.name':'Admin',     't.admin.sub':'Visa, documents, reports',
+    commonLabel:'Common questions',
+    helperTitle:'Need to talk to a person?',
+    helperSub:'Connect with a helper',
+    tabHome:'Home', tabHistory:'History', tabOrgs:'Orgs', tabSettings:'Settings',
+    histTitle:'Conversations',
+    histLead:'Saved on this device only. Delete any time.',
+    histEmpty:'No conversations yet',
+    histEmptyHint:'Ask Nabi something and it will show up here.',
+    histMsgs:'%N messages', histClearAll:'Delete all conversations',
+    histDelete:'Delete this conversation', histCleared:'Conversations deleted.',
+    placeFind:'Find one near me', placeLocating:'Checking your location...',
+    placeDenied:'Location access was blocked. Allow it in your browser settings.',
+    placeUnsupported:'This browser cannot share your location.',
+    placeFail:"Couldn't find anything nearby. Try the map instead.",
+    placeNear:'Near %R', placeOpen:'Open map',
+    placeOnMap:"Find “%Q” on the map", placeKm:'%N km away', placeM:'%N m away',
+    agoNow:'just now', agoMin:'%N min ago', agoHour:'%N h ago',
+    agoYesterday:'yesterday', agoDay:'%N days ago',
+    sheetTitle:'Choose language', sheetSub:'You can change this anytime.',
+    soon:'soon', toastSoon:'Coming soon', clearTopic:'Clear topic',
+
+    back:'Back', chatAuto:'Ask Nabi', composerPh:'Type your question...',
+    sendSr:'Send', hotlinePre:'Need help right now?',
+    helperLink:'Get a helper', aiFilling:'Summarizing your chat...',
+    aiFilled:'Filled in from your conversation. Edit anything you like.',
+    intro:'Ask in your own language. Nabi tells you what to prepare and where to go.',
+    disclaimer:'For reference only. Confirm with the relevant office before acting.',
+    emptyInput:'Type a question first.',
+    tooLong:'That question is too long. Please shorten it.',
+    thinking:'Nabi is thinking...',
+    escalate:'Still need help? Talk to a person',
+    errTitle:"Couldn't get an answer",
+    errBody:'Something went wrong on the way to the AI. Try again, or call for help now.',
+    errKeyBody:'The AI is not connected yet (no API key configured). You can still call for help now.',
+    errRateBody:'The free AI quota is used up for now. Wait a minute and try again, or call for help.',
+    errBlockBody:'The AI declined to answer this one. Please contact the office below directly.',
+    errBusyBody:'The AI is busy right now. Tap Try again in a moment, or call for help.',
+    errRetry:'Try again', errCall:'Call 1345',
+    emgTitle:'This may be an emergency',
+    emgBody:'If someone is in danger, call now. Ambulances are free and do not require insurance.',
+    call119:'Call 119', call1339:'1339',
+
+    reqTitle:'Request Help',
+    reqLead:"We'll share this with a helper. Don't include ID or card numbers.",
+    fLang:'Language you need', fLangHint:'This can differ from the app language.',
+    fTopic:'Topic', fNeed:'What you need help with',
+    fNeedPh:'For example: I need someone with me when I sign the lease.',
+    aiFill:'Fill from my chat',
+    fWhen:'When', whenWeekday:'Weekday', whenWeekend:'Weekend', whenAny:'Anytime',
+    fContact:'How to reach you', fContactHint:'Used only for this request, then deleted.',
+    reqSend:'Send request',
+    errNeed:'Please describe what you need.',
+    errContact:'Enter a valid email or phone number.',
+    noChat:'No conversation to summarize yet.',
+    summaryFail:"Couldn't summarize. Please write it yourself.",
+
+    resTitle:'Your Request', resDone:'Request received',
+    resWithin:"We'll contact you within 24 hours.",
+    resHelpers:'Available helpers', resOrgs:'Official organizations',
+    resDoneBtn:'Done', noHelpers:'No helper matches yet. The organizations below can help now.',
+    demoNote:'Demo data — live helper matching is not available in this version.',
+    helperMeta:'%L / Korean · %Y years in Korea',
+
+    orgsTitle:'Organizations',
+    fAll:'All', fEmergency:'Emergency',
+    open:'Open', h24:'24 hours', reopens:'Reopens %T', weekdays:'Mon–Fri',
+    gEmergency:'Emergency', gAdmin:'Visa & Documents',
+    gHousing:'Housing & Legal', gMedical:'Health',
+
+    setTitle:'Settings', setLangSec:'Language', setLang:'App language',
+    setPrivSec:'Privacy',
+    setPrivBody:'Chats are saved only in this browser so you can look them up later. They are never sent to a server, and you can delete them any time.',
+    setClear:'Clear conversation',
+    setAboutSec:'About', setHow:'How Nabi works', setDis:'Disclaimer',
+    how1:'You ask a question in your own language.',
+    how2:'Nabi explains what to prepare and where to go, and names its source.',
+    how3:'If information is not enough, Nabi connects you to a person or an office.',
+    dis1:'Nabi is not a lawyer, a doctor, or a government office. Answers are for reference and can be wrong or out of date.',
+    dis2:'Rules differ by visa type, city, and district. Always confirm with the relevant office before acting on anything important.',
+    cleared:'Conversation cleared.',
+
+    ex:{
+      auto:["My landlord won't return my deposit.",
+            'I have a fever — where should I go?',
+            'I moved. Where do I report my new address?'],
+      medical:['I have a fever — where should I go?',
+               'How do I find a hospital that speaks English?',
+               'Is health insurance available to foreigners?'],
+      housing:['Can foreigners sign a jeonse contract?',
+               'What do wolse and gwanlibi mean?',
+               'What should I check before signing a lease?'],
+      admin:['I moved. Where do I report my new address?',
+             'How do I renew my alien registration card?',
+             'What documents do I need to extend my visa?'],
+    },
   },
+
   ko: {
-    hero: '한국 생활, 무엇을\n도와드릴까요?',
-    askPlaceholder: '무엇이든 물어보세요...',
-    micSoon: '음성 입력 — 준비 중',
-    askCta: 'AI에게 묻기',
-    privacy: '대화 내용과 개인정보를 저장하지 않습니다.',
-    topicsLabel: '또는 분야를 선택하세요',
-    't.medical.name': '의료',   't.medical.sub': '병원 · 약국 · 건강보험',
-    't.housing.name': '부동산', 't.housing.sub': '계약 · 보증금 · 이사',
-    't.admin.name': '행정',     't.admin.sub': '비자 · 서류 · 신고',
-    commonLabel: '자주 묻는 질문',
-    q1: '외국인도 전세 계약을 할 수 있나요?',
-    q2: '주소가 바뀌었는데 어디에 신고하나요?',
-    q3: '외국인도 건강보험이 적용되나요?',
-    helperTitle: '사람과 이야기하고 싶으세요?',
-    helperSub: '언어 지원자 연결하기',
-    tabHome: '홈', tabOrgs: '기관', tabSettings: '설정',
-    sheetTitle: '언어를 선택하세요',
-    sheetSub: '언제든지 변경할 수 있습니다.',
-    soon: '준비 중',
-    toastSoon: '곧 제공됩니다',
-    nav: { S02: 'AI 상담(S02)으로 이동 — 분야: %s', S03: '연결 요청서(S03)로 이동',
-           S05: '기관 목록(S05)으로 이동', S06: '설정(S06)으로 이동' },
+    continue:'계속하기',
+    hero:'한국 생활, 무엇을\n도와드릴까요?',
+    askPlaceholder:'무엇이든 물어보세요...',
+    micLabel:'음성 입력',
+    voiceListening:'듣고 있습니다... 지금 말씀하세요.',
+    voiceUnsupported:'이 브라우저는 음성 입력을 지원하지 않습니다. Chrome 또는 Safari를 사용해보세요.',
+    voiceDenied:'마이크 권한이 차단되었습니다. 브라우저 설정에서 허용해주세요.',
+    voiceFail:'잘 듣지 못했습니다. 다시 시도해주세요.',
+    askCta:'AI에게 묻기',
+    privacy:'대화는 이 기기에만 남고, 서버에는 저장되지 않습니다.',
+    topicsLabel:'또는 분야를 선택하세요',
+    't.medical.name':'의료',   't.medical.sub':'병원 · 약국 · 건강보험',
+    't.housing.name':'부동산', 't.housing.sub':'계약 · 보증금 · 이사',
+    't.admin.name':'행정',     't.admin.sub':'비자 · 서류 · 신고',
+    commonLabel:'자주 묻는 질문',
+    helperTitle:'사람과 이야기하고 싶으세요?',
+    helperSub:'언어 지원자 연결하기',
+    tabHome:'홈', tabHistory:'기록', tabOrgs:'기관', tabSettings:'설정',
+    histTitle:'대화 기록',
+    histLead:'이 기기에만 저장됩니다. 언제든 삭제할 수 있습니다.',
+    histEmpty:'아직 대화가 없습니다',
+    histEmptyHint:'Nabi에게 무엇이든 물어보면 여기에 쌓입니다.',
+    histMsgs:'%N개 메시지', histClearAll:'대화 기록 전체 삭제',
+    histDelete:'이 대화 삭제', histCleared:'대화 기록을 삭제했습니다.',
+    placeFind:'내 주변에서 찾기', placeLocating:'위치를 확인하는 중...',
+    placeDenied:'위치 권한이 차단되었습니다. 브라우저 설정에서 허용해주세요.',
+    placeUnsupported:'이 브라우저는 위치를 알려줄 수 없습니다.',
+    placeFail:'주변에서 찾지 못했습니다. 지도에서 확인해보세요.',
+    placeNear:'%R 기준', placeOpen:'지도 열기',
+    placeOnMap:'지도에서 ‘%Q’ 찾기', placeKm:'%N km 거리', placeM:'%N m 거리',
+    agoNow:'방금', agoMin:'%N분 전', agoHour:'%N시간 전',
+    agoYesterday:'어제', agoDay:'%N일 전',
+    sheetTitle:'언어를 선택하세요', sheetSub:'언제든지 변경할 수 있습니다.',
+    soon:'준비 중', toastSoon:'곧 제공됩니다', clearTopic:'분야 선택 해제',
+
+    back:'뒤로', chatAuto:'Nabi에게 묻기', composerPh:'질문을 입력하세요...',
+    sendSr:'보내기', hotlinePre:'지금 도움이 필요하면',
+    helperLink:'지원자 연결', aiFilling:'대화 내용을 정리하는 중...',
+    aiFilled:'대화 내용으로 채웠습니다. 자유롭게 고치세요.',
+    intro:'어떤 언어로든 물어보세요. 무엇을 준비하고 어디로 가야 하는지 알려드립니다.',
+    disclaimer:'참고용 정보입니다. 실제 처리 전에 관련 기관에서 확인하세요.',
+    emptyInput:'질문을 먼저 입력해주세요.',
+    tooLong:'질문이 너무 깁니다. 조금 줄여주세요.',
+    thinking:'Nabi가 생각하고 있습니다...',
+    escalate:'해결이 안 되나요? 사람과 이야기하기',
+    errTitle:'답변을 받지 못했습니다',
+    errBody:'AI로 가는 길에 문제가 생겼습니다. 다시 시도하거나, 지금 바로 전화할 수 있습니다.',
+    errKeyBody:'AI가 아직 연결되지 않았습니다 (API 키 미설정). 지금 바로 전화로 도움을 받을 수 있습니다.',
+    errRateBody:'무료 AI 사용량을 모두 썼습니다. 잠시 후 다시 시도하거나 전화로 문의하세요.',
+    errBlockBody:'AI가 이 질문에는 답하지 않았습니다. 아래 기관에 직접 문의해주세요.',
+    errBusyBody:'AI가 지금 혼잡합니다. 잠시 후 다시 시도하거나 전화로 문의하세요.',
+    errRetry:'다시 시도', errCall:'1345 전화',
+    emgTitle:'응급 상황일 수 있습니다',
+    emgBody:'위험한 상황이면 지금 전화하세요. 구급차는 무료이며 보험이 없어도 이용할 수 있습니다.',
+    call119:'119 전화', call1339:'1339',
+
+    reqTitle:'연결 요청서',
+    reqLead:'지원자에게 전달되는 내용입니다. 신분증·카드 번호는 적지 마세요.',
+    fLang:'필요한 언어', fLangHint:'앱 표시 언어와 다르게 고를 수 있습니다.',
+    fTopic:'분야', fNeed:'필요한 도움',
+    fNeedPh:'예: 계약할 때 같이 있어줄 사람이 필요합니다.',
+    aiFill:'대화 내용으로 채우기',
+    fWhen:'가능한 시간', whenWeekday:'평일', whenWeekend:'주말', whenAny:'아무때나',
+    fContact:'연락 방법', fContactHint:'이 요청 처리에만 사용하고 이후 파기합니다.',
+    reqSend:'요청 보내기',
+    errNeed:'어떤 도움이 필요한지 적어주세요.',
+    errContact:'올바른 이메일 또는 전화번호를 입력해주세요.',
+    noChat:'요약할 대화가 아직 없습니다.',
+    summaryFail:'요약에 실패했습니다. 직접 작성해주세요.',
+
+    resTitle:'요청 결과', resDone:'요청이 접수되었습니다',
+    resWithin:'24시간 이내에 연락드립니다.',
+    resHelpers:'연결 가능한 지원자', resOrgs:'관련 기관',
+    resDoneBtn:'완료', noHelpers:'조건에 맞는 지원자가 없습니다. 아래 기관은 지금 도움을 줄 수 있습니다.',
+    demoNote:'데모 데이터입니다 — 이 버전에서는 실제 지원자 매칭이 동작하지 않습니다.',
+    helperMeta:'%L / 한국어 · 한국 거주 %Y년',
+
+    orgsTitle:'기관 목록',
+    fAll:'전체', fEmergency:'응급',
+    open:'운영 중', h24:'24시간', reopens:'%T 재개', weekdays:'월–금',
+    gEmergency:'응급', gAdmin:'비자 · 서류',
+    gHousing:'주거 · 법률', gMedical:'건강',
+
+    setTitle:'설정', setLangSec:'언어', setLang:'앱 표시 언어',
+    setPrivSec:'개인정보',
+    setPrivBody:'대화는 나중에 다시 볼 수 있도록 이 브라우저에만 저장됩니다. 서버로는 전송되지 않으며, 언제든 삭제할 수 있습니다.',
+    setClear:'대화 내용 지우기',
+    setAboutSec:'정보', setHow:'Nabi 동작 방식', setDis:'면책 고지',
+    how1:'사용자가 자신의 언어로 질문합니다.',
+    how2:'무엇을 준비하고 어디로 가야 하는지 알려주고, 근거를 함께 밝힙니다.',
+    how3:'정보만으로 부족하면 사람이나 기관으로 연결합니다.',
+    dis1:'Nabi는 변호사도, 의사도, 관공서도 아닙니다. 답변은 참고용이며 틀리거나 오래된 정보일 수 있습니다.',
+    dis2:'규정은 체류자격·도시·구청에 따라 다릅니다. 중요한 일을 처리하기 전에는 반드시 관련 기관에서 확인하세요.',
+    cleared:'대화 내용을 지웠습니다.',
+
+    ex:{
+      auto:['집주인이 보증금을 안 돌려줘요.',
+            '열이 나는데 어디로 가야 하나요?',
+            '이사했는데 주소는 어디에 신고하나요?'],
+      medical:['열이 나는데 어디로 가야 하나요?',
+               '영어가 되는 병원을 찾고 싶어요.',
+               '외국인도 건강보험이 적용되나요?'],
+      housing:['외국인도 전세 계약을 할 수 있나요?',
+               '월세와 관리비가 무슨 뜻인가요?',
+               '계약 전에 무엇을 확인해야 하나요?'],
+      admin:['이사했는데 주소는 어디에 신고하나요?',
+             '외국인등록증을 재발급받고 싶어요.',
+             '비자 연장에 필요한 서류가 뭔가요?'],
+    },
   },
 };
 
-const TOPIC_NAMES = {
-  en: { auto: 'auto-detect', medical: 'Medical', housing: 'Housing', admin: 'Admin', none: '—' },
-  ko: { auto: '자동 판별', medical: '의료', housing: '부동산', admin: '행정', none: '미지정' },
+const EMERGENCY = [
+  "can't breathe",'cant breathe','not breathing','unconscious','passed out',
+  'heavy bleeding','bleeding a lot','chest pain','stroke','seizure',
+  'overdose','poison','suicide','severe burn',
+  '숨을 못','숨이 안','숨쉬기','의식이 없','의식을 잃','쓰러졌',
+  '피가 많이','가슴이 아파','가슴이 아프','뇌졸중','발작','중독','자살','심한 화상',
+];
+const WANT_HUMAN = ['talk to a person','real person','interpreter','사람과','사람 연결','통역'];
+
+/* ══ 상태 ════════════════════════════════════════════════════ */
+const LANG_KEY = 'nabi.lang';
+const el = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g,
+  c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+
+const detectLang = () => {
+  const nav = (navigator.language || 'en').slice(0,2).toLowerCase();
+  return STRINGS[nav] ? nav : 'en';
+};
+const storedLang = () => {
+  try { const v = localStorage.getItem(LANG_KEY); return STRINGS[v] ? v : null; }
+  catch { return null; }
 };
 
-/* ── 언어 상태 ──────────────────────────────────────────────── */
-const STORE_KEY = 'nabi.lang';
+let lang = storedLang() || detectLang();
+const t = key => STRINGS[lang][key] ?? STRINGS.en[key] ?? key;
+const langLabel = id => (LANGS.find(l => l.id === id) || LANGS[0]).label;
 
-function detectLang() {
+let homeTopic = 'auto';   // 홈에서 고른 분야 (auto = 미선택)
+let chatTopic = 'auto';
+let history = [];         // 세션 메모리에만 존재 (PRD 11장)
+let busy = false;
+let orgFilter = 'all';
+let reqWhen = 'any';
+let cameFrom = 'home';    // S03 뒤로가기 목적지
+
+/* ══ 대화 기록 ═══════════════════════════════════════════════
+   브라우저 localStorage 에만 저장한다. 서버로는 나가지 않는다.
+   PRD 11장의 '서버 영구 저장 안 함'은 유지하고, 기기 보관만 허용한다.
+   ══════════════════════════════════════════════════════════ */
+const CHAT_KEY = 'nabi.chats';
+const MAX_CHATS = 40;
+let currentChatId = null;
+
+function loadChats() {
   try {
-    const saved = localStorage.getItem(STORE_KEY);
-    if (saved && STRINGS[saved]) return saved;
-  } catch (e) { /* private mode */ }
-  const nav = (navigator.language || 'en').slice(0, 2).toLowerCase();
-  return STRINGS[nav] ? nav : 'en';       // PRD 7장 — navigator.language 로 기본값 추정
+    const raw = localStorage.getItem(CHAT_KEY);
+    const arr = raw ? JSON.parse(raw) : [];
+    return Array.isArray(arr) ? arr : [];
+  } catch { return []; }
+}
+function writeChats(list) {
+  try { localStorage.setItem(CHAT_KEY, JSON.stringify(list.slice(0, MAX_CHATS))); }
+  catch { /* 용량 초과 · 프라이빗 모드 */ }
 }
 
-let lang = detectLang();
+function saveCurrentChat() {
+  if (!history.length) return;
+  const first = history.find(m => m.role === 'user');
+  if (!first) return;
 
-function t(key) { return STRINGS[lang][key] ?? STRINGS.en[key] ?? key; }
+  const list = loadChats().filter(c => c.id !== currentChatId);
+  currentChatId ??= 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
-function render() {
-  const meta = LANGS.find(l => l.id === lang);
-  document.documentElement.lang = lang;
+  list.unshift({
+    id: currentChatId,
+    ts: Date.now(),
+    topic: chatTopic,
+    lang,
+    title: first.content.slice(0, 120),
+    messages: history.map(m => ({ role: m.role, content: m.content })),
+  });
+  writeChats(list);
+}
 
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const val = t(el.dataset.i18n);
-    // hero 는 줄바꿈을 유지한다
-    if (val.includes('\n')) el.innerHTML = val.split('\n')
-      .map(s => s.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])))
-      .join('<br>');
-    else el.textContent = val;
+function deleteChat(id) {
+  writeChats(loadChats().filter(c => c.id !== id));
+  if (id === currentChatId) { currentChatId = null; history = []; }
+  renderHistory();
+}
+
+function ago(ts) {
+  const sec = Math.floor((Date.now() - ts) / 1000);
+  if (sec < 60)    return t('agoNow');
+  if (sec < 3600)  return t('agoMin').replace('%N', Math.floor(sec / 60));
+  if (sec < 86400) return t('agoHour').replace('%N', Math.floor(sec / 3600));
+  const d = Math.floor(sec / 86400);
+  if (d === 1) return t('agoYesterday');
+  if (d < 7)   return t('agoDay').replace('%N', d);
+  return new Date(ts).toLocaleDateString(lang === 'ko' ? 'ko-KR' : 'en-US',
+    { month: 'short', day: 'numeric' });
+}
+
+/* ══ 뷰 전환 ═════════════════════════════════════════════════ */
+const VIEWS = {
+  onboard:'viewOnboard', home:'viewHome', chat:'viewChat',
+  request:'viewRequest', result:'viewResult',
+  history:'viewHistory', orgs:'viewOrgs', settings:'viewSettings',
+};
+const TABBED = { home:0, history:1, orgs:2, settings:3 };
+let current = 'home';
+
+function show(name) {
+  current = name;
+  Object.entries(VIEWS).forEach(([k,id]) => { el(id).dataset.active = String(k === name); });
+  const idx = TABBED[name];
+  el('tabs').dataset.show = String(idx !== undefined);
+  document.querySelectorAll('[data-tab]').forEach(b => {
+    if (TABBED[b.dataset.tab] === idx) b.setAttribute('aria-current','page');
+    else b.removeAttribute('aria-current');
+  });
+  if (name === 'history') renderHistory();   // '3분 전' 같은 표시를 새로 계산한다
+  el(VIEWS[name]).querySelector('.scroll')?.scrollTo?.(0,0);
+}
+
+/* ══ 홈 · 분야 선택 (화면을 옮기지 않고 테마로만 남는다) ═════ */
+const examplesFor = topic =>
+  (STRINGS[lang].ex || STRINGS.en.ex)[topic] || STRINGS.en.ex[topic] || [];
+
+function renderTopicChip() {
+  const slot = el('tchipSlot');
+  slot.innerHTML = '';
+  if (homeTopic === 'auto') return;
+  const chip = document.createElement('div');
+  chip.className = 'tchip';
+  chip.dataset.topic = homeTopic;
+  chip.innerHTML =
+    `<svg class="ico" aria-hidden="true"><use href="#${TOPIC_ICON[homeTopic]}"/></svg>` +
+    `<span>${esc(t(`t.${homeTopic}.name`))}</span>` +
+    `<button type="button" aria-label="${esc(t('clearTopic'))}">` +
+    '<svg class="ico" aria-hidden="true"><use href="#i-close"/></svg></button>';
+  chip.querySelector('button').addEventListener('click', () => selectTopic('auto'));
+  slot.appendChild(chip);
+}
+
+function renderHomeAsk() {
+  // 입력창 예시도 분야에 맞춰 바뀐다 — '무엇을 물어야 할지' 가르쳐준다
+  const first = examplesFor(homeTopic)[0];
+  el('homeInput').placeholder = homeTopic === 'auto' ? t('askPlaceholder') : first;
+}
+
+function renderHomeExamples() {
+  const box = el('qlist');
+  box.innerHTML = '';
+  examplesFor(homeTopic).forEach(text => {
+    const b = document.createElement('button');
+    b.className = 'q'; b.type = 'button';
+    b.innerHTML = `<span class="txt">${esc(text)}</span>` +
+      '<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg>';
+    b.addEventListener('click', () => goChat(homeTopic, text));   // 1탭 → 답변
+    box.appendChild(b);
+  });
+}
+
+const syncTopicCards = () => document.querySelectorAll('[data-select]').forEach(c =>
+  c.setAttribute('aria-pressed', String(c.dataset.select === homeTopic)));
+
+function selectTopic(topic) {
+  homeTopic = (topic === homeTopic || !TOPIC_ICON[topic]) ? 'auto' : topic;
+  syncTopicCards(); renderTopicChip(); renderHomeAsk(); renderHomeExamples();
+  if (homeTopic !== 'auto') {
+    el('tchipSlot').closest('.ask-card').scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }
+}
+
+function autoGrowHome() {
+  const ta = el('homeInput');
+  ta.style.height = 'auto';
+  ta.style.height = Math.min(Math.max(ta.scrollHeight, 42), 120) + 'px';
+}
+
+/* 홈 입력 → 채팅 진입 후 즉시 전송 (버튼과 입력창의 역할을 합쳤다) */
+function submitHome() {
+  const q = el('homeInput').value.trim();
+  if (!q) {
+    toast(t('emptyInput'));
+    const f = el('homeInput');
+    f.classList.remove('shake'); void f.offsetWidth; f.classList.add('shake'); f.focus();
+    return;
+  }
+  el('homeInput').value = ''; autoGrowHome();
+  goChat(homeTopic, q);
+}
+
+/* ══ S02 · 채팅 ══════════════════════════════════════════════ */
+function syncChatHeader() {
+  el('chatTitle').textContent = chatTopic === 'auto' ? t('chatAuto') : t(`t.${chatTopic}.name`);
+  const icon = el('chatIcon');
+  const sym = TOPIC_ICON[chatTopic] || 'i-nabi';
+  icon.firstElementChild.setAttribute('href', '#' + sym);
+  icon.classList.toggle('is-logo', sym === 'i-nabi');
+}
+
+function openChat(topic) {
+  chatTopic = TOPIC_ICON[topic] ? topic : 'auto';
+  history = [];
+  currentChatId = null;          // 새 대화 — 기존 기록을 덮어쓰지 않는다
+  el('chatLog').innerHTML = '';
+  el('escalate').dataset.show = 'false';
+  renderIntro(); syncChatHeader(); show('chat');
+}
+
+/* 질문을 들고 들어가면 바로 보낸다 */
+function goChat(topic, text) {
+  openChat(topic);
+  if (text) send(text);
+  else setTimeout(() => el('input').focus(), 60);
+}
+
+function renderIntro() {
+  const wrap = document.createElement('div');
+  wrap.className = 'intro';
+  const p = document.createElement('p');
+  p.textContent = t('intro');
+  wrap.appendChild(p);
+  const chips = document.createElement('div');
+  chips.className = 'chips';
+  examplesFor(chatTopic).forEach(text => {
+    const b = document.createElement('button');
+    b.className = 'chip'; b.type = 'button'; b.textContent = text;
+    b.addEventListener('click', () => send(text));
+    chips.appendChild(b);
+  });
+  wrap.appendChild(chips);
+  el('chatLog').appendChild(wrap);
+}
+
+const clearIntro = () => el('chatLog').querySelector('.intro')?.remove();
+const atBottom = () => {
+  const l = el('chatLog');
+  return l.scrollHeight - l.scrollTop - l.clientHeight < 90;
+};
+const toBottom = () => { const l = el('chatLog'); l.scrollTop = l.scrollHeight; };
+
+/* 최소 마크다운 — 이스케이프 후 변환하므로 안전하다 */
+const inlineMd = s => s
+  .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+  .replace(/`([^`]+)`/g, '<code>$1</code>');
+
+function renderMd(src) {
+  const lines = esc(src).split('\n');
+  let out = '', inList = false;
+  for (const raw of lines) {
+    const line = raw.trimEnd();
+    const li = line.match(/^\s*(?:[-*·•]|\d+\.)\s+(.*)$/);
+    if (li) {
+      if (!inList) { out += '<ul>'; inList = true; }
+      out += `<li>${inlineMd(li[1])}</li>`; continue;
+    }
+    if (inList) { out += '</ul>'; inList = false; }
+    if (!line.trim()) continue;
+    const h = line.match(/^#{1,4}\s+(.*)$/);
+    out += h ? `<p class="h">${inlineMd(h[1])}</p>` : `<p>${inlineMd(line)}</p>`;
+  }
+  if (inList) out += '</ul>';
+  return out;
+}
+
+function addUser(text) {
+  const d = document.createElement('div');
+  d.className = 'msg user'; d.textContent = text;
+  el('chatLog').appendChild(d); toBottom();
+}
+
+function addTyping() {
+  const d = document.createElement('div');
+  d.className = 'typing'; d.setAttribute('role','status');
+  d.innerHTML = '<span class="dots"><i></i><i></i><i></i></span>' +
+                `<span>${esc(t('thinking'))}</span>`;
+  el('chatLog').appendChild(d); toBottom();
+  return d;
+}
+
+function addAi() {
+  const d = document.createElement('div');
+  d.className = 'msg ai';
+  d.innerHTML = '<div class="body"></div>';
+  el('chatLog').appendChild(d);
+  const body = d.querySelector('.body');
+  return {
+    setText(md) { const s = atBottom(); body.innerHTML = renderMd(md); if (s) toBottom(); },
+    finish() {
+      // 면책은 모델에게 맡기지 않고 UI 가 항상 붙인다 (PRD 6.4)
+      const note = document.createElement('div');
+      note.className = 'disclaimer';
+      note.innerHTML = '<svg class="ico" aria-hidden="true"><use href="#i-info"/></svg>' +
+        `<span>${esc(t('disclaimer'))}</span>`;
+      d.appendChild(note); toBottom();
+    },
+    remove() { d.remove(); },
+  };
+}
+
+function addEmergency() {
+  if (el('chatLog').querySelector('.emergency')) return;
+  const d = document.createElement('div');
+  d.className = 'emergency'; d.setAttribute('role','alert');
+  d.innerHTML =
+    `<div class="top"><svg class="ico" aria-hidden="true"><use href="#i-siren"/></svg>
+       <span>${esc(t('emgTitle'))}</span></div>
+     <p>${esc(t('emgBody'))}</p>
+     <div class="calls">
+       <a class="call" href="tel:119"><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg>
+         <span>${esc(t('call119'))}</span></a>
+       <a class="call ghost" href="tel:1339"><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg>
+         <span>${esc(t('call1339'))}</span></a>
+     </div>`;
+  el('chatLog').appendChild(d); toBottom();
+}
+
+/* 모델이 답변 끝에 붙이는 후속 질문 블록의 구분자.
+   추가 API 호출 없이 같은 응답에 실어 보내므로 지연도 비용도 늘지 않는다. */
+const NEXT_MARK = '<<<NEXT>>>';
+const PLACE_MARK = '<<<PLACE>>>';
+
+/* 스트리밍 중에는 구분자가 조각으로 도착한다("<<", "<<<PLA"...).
+   그 파편이 화면에 잠깐 보이지 않도록 꼬리를 잘라낸다. */
+function splitAnswer(acc) {
+  const pi = acc.indexOf(PLACE_MARK);
+  const ni = acc.indexOf(NEXT_MARK);
+  const marks = [pi, ni].filter(i => i !== -1);
+
+  const answer = marks.length
+    ? acc.slice(0, Math.min(...marks))
+    : acc.replace(/\n*<{1,3}[A-Z]{0,6}>{0,3}\s*$/, '');
+
+  let place = '';
+  if (pi !== -1) {
+    const after = acc.slice(pi + PLACE_MARK.length);
+    const stop = after.indexOf(NEXT_MARK);
+    place = (stop === -1 ? after : after.slice(0, stop))
+      .split('\n').map(l => l.trim()).filter(Boolean)[0] || '';
+    place = place.replace(/^[-*•\s]+/, '').slice(0, 40);
+  }
+
+  const tail = ni !== -1 ? acc.slice(ni + NEXT_MARK.length) : '';
+  return { answer, place, tail };
+}
+
+function parseFollowups(tail) {
+  return tail.split('\n')
+    .map(l => l.replace(/^[\s\-*•\d.)]+/, '').replace(/^["'"'"'\u201c]|["'"'"'\u201d]$/g, '').trim())
+    .filter(l => l.length >= 4 && l.length <= 90)
+    .slice(0, 3);
+}
+
+/* ══ 대화 기반 위치 추천 ══════════════════════════════════════
+   답변이 '어디로 가라'로 끝나면 그 장소를 내 위치 기준으로 찾아준다.
+   위치는 버튼을 누른 순간에만 요청한다 — 페이지 진입 시에는 묻지 않는다.
+   ══════════════════════════════════════════════════════════ */
+function coords() {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) { reject(new Error('unsupported')); return; }
+    navigator.geolocation.getCurrentPosition(
+      pos => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+      err => reject(new Error(err.code === err.PERMISSION_DENIED ? 'denied' : 'failed')),
+      { enableHighAccuracy: false, timeout: 12000, maximumAge: 300000 },
+    );
+  });
+}
+
+const prettyDist = m => m == null ? ''
+  : m >= 1000 ? t('placeKm').replace('%N', (m / 1000).toFixed(1))
+              : t('placeM').replace('%N', m);
+
+function addPlaceAsk(term) {
+  const btn = document.createElement('button');
+  btn.className = 'place-ask'; btn.type = 'button';
+  btn.innerHTML = '<svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg>' +
+    `<span>${esc(t('placeFind'))}</span>`;
+
+  btn.addEventListener('click', async () => {
+    btn.disabled = true;
+    btn.querySelector('span').textContent = t('placeLocating');
+    try {
+      const { lat, lng } = await coords();
+      const r = await fetch(`/api/place?q=${encodeURIComponent(term)}&lat=${lat}&lng=${lng}`);
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || 'failed');
+      btn.remove();
+      addPlaces(term, data);
+    } catch (err) {
+      btn.disabled = false;
+      btn.querySelector('span').textContent = t('placeFind');
+      const key = { denied:'placeDenied', unsupported:'placeUnsupported' }[err.message] || 'placeFail';
+      toast(t(key));
+    }
   });
 
-  document.getElementById('langFlag').textContent = meta.flag;
-  document.getElementById('langCode').textContent = meta.code;
-  document.getElementById('langSr').textContent = t('sheetTitle') + ' — ' + meta.label;
-  document.getElementById('langBtn').setAttribute('aria-label', t('sheetTitle') + ': ' + meta.label);
-
-  renderOptions();
+  el('chatLog').appendChild(btn);
+  toBottom();
 }
 
-function setLang(next) {
-  lang = next;
-  try { localStorage.setItem(STORE_KEY, next); } catch (e) { /* ignore */ }
-  render();                                 // 3.1 — 현재 화면 유지한 채 즉시 리렌더
+function addPlaces(term, data) {
+  const box = document.createElement('div');
+  box.className = 'places';
+
+  if (data.region) {
+    const h = document.createElement('div');
+    h.className = 'head';
+    h.innerHTML = '<svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg>' +
+      `<span>${esc(t('placeNear').replace('%R', data.region))}</span>`;
+    box.appendChild(h);
+  }
+
+  const APPS = [
+    ['naver',  'Naver',  true],
+    ['kakao',  'Kakao',  false],
+    ['google', 'Google', false],
+  ];
+
+  const card = (title, meta, links) => {
+    const d = document.createElement('div');
+    d.className = 'place';
+    d.innerHTML =
+      '<span class="tile" aria-hidden="true"><svg class="ico"><use href="#i-pin"/></svg></span>' +
+      `<span class="info"><span class="nm">${esc(title)}</span>` +
+      (meta ? `<span class="meta">${esc(meta)}</span>` : '') + '</span>' +
+      '<span class="apps">' +
+      APPS.filter(([k]) => links?.[k]).map(([k, label, primary]) =>
+        `<a class="${primary ? 'primary' : ''}" href="${esc(links[k])}" ` +
+        `target="_blank" rel="noopener">` +
+        '<svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg>' +
+        `<span>${esc(label)}</span></a>`).join('') +
+      '</span>';
+    return d;
+  };
+
+  if (data.results?.length) {
+    data.results.forEach(r => box.appendChild(
+      card(r.name, [prettyDist(r.distance), r.address].filter(Boolean).join(' · '), r.links)));
+  } else {
+    // NCP 권한이 없거나 후보가 없을 때 — 좌표 기준 지도 검색으로 넘긴다
+    box.appendChild(card(t('placeOnMap').replace('%Q', term), '', data.links));
+  }
+
+  el('chatLog').appendChild(box);
+  toBottom();
 }
 
-/* ── 언어 시트 ──────────────────────────────────────────────── */
-const scrim = document.getElementById('scrim');
-const sheet = document.getElementById('sheet');
-const langBtn = document.getElementById('langBtn');
+function addFollowups(questions) {
+  if (!questions.length) return;
+  const box = document.createElement('div');
+  box.className = 'followup';
+  questions.forEach(q => {
+    const b = document.createElement('button');
+    b.className = 'fq'; b.type = 'button'; b.textContent = q;
+    b.addEventListener('click', () => { box.remove(); send(q); });
+    box.appendChild(b);
+  });
+  el('chatLog').appendChild(box);
+  toBottom();
+}
 
-function renderOptions() {
-  const box = document.getElementById('opts');
+const ERR_BODY = {
+  missing_api_key:'errKeyBody', rate_limited:'errRateBody',
+  overloaded:'errBusyBody', blocked:'errBlockBody',
+};
+
+function addError(kind) {
+  const d = document.createElement('div');
+  d.className = 'errbox'; d.setAttribute('role','alert');
+  d.innerHTML =
+    `<div class="top"><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg>
+       <span>${esc(t('errTitle'))}</span></div>
+     <p>${esc(t(ERR_BODY[kind] || 'errBody'))}</p>
+     <div class="acts">
+       <button type="button">${esc(t('errRetry'))}</button>
+       <a href="tel:1345"><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg>
+         <span>${esc(t('errCall'))}</span></a>
+     </div>`;
+  d.querySelector('button').addEventListener('click', () => { d.remove(); requestAnswer(); });
+  el('chatLog').appendChild(d); toBottom();
+  el('escalate').dataset.show = 'true';   // PRD 6.5 — 근거 미확보 시 에스컬레이션
+}
+
+function setBusy(on) {
+  busy = on;
+  el('sendBtn').disabled = on;
+  el('input').disabled = on;
+}
+
+function send(text) {
+  if (busy) return;
+  const q = (text ?? el('input').value).trim();
+
+  if (!q) {                                     // 빈 입력 방어
+    toast(t('emptyInput'));
+    const i = el('input');
+    i.classList.remove('shake'); void i.offsetWidth; i.classList.add('shake'); i.focus();
+    return;
+  }
+  if (q.length > 2000) { toast(t('tooLong')); return; }
+
+  clearIntro();
+  el('input').value = ''; autoGrow();
+  addUser(q);
+  history.push({ role:'user', content:q });
+
+  const low = q.toLowerCase();
+  if (EMERGENCY.some(k => low.includes(k))) addEmergency();
+  if (WANT_HUMAN.some(k => low.includes(k))) el('escalate').dataset.show = 'true';
+
+  requestAnswer();
+}
+
+async function requestAnswer() {
+  setBusy(true);
+  const typing = addTyping();
+
+  try {
+    const res = await fetch('/api/chat', {
+      method:'POST', headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({ messages:history, topic:chatTopic, lang, intent:'chat' }),
+    });
+
+    if (!res.ok || !res.body) {
+      const payload = await res.json().catch(() => ({}));
+      throw new Error(payload.error || `http_${res.status}`);
+    }
+
+    typing.remove();
+    const bubble = addAi();
+    const reader = res.body.getReader();
+    const dec = new TextDecoder();
+    let acc = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      acc += dec.decode(value, { stream:true });
+      if (acc.includes('__NABI_BLOCKED__')) { bubble.remove(); throw new Error('blocked'); }
+      if (acc.includes('__NABI_EMPTY__') || acc.includes('__NABI_ERROR__')) {
+        bubble.remove(); throw new Error('empty_response');
+      }
+      bubble.setText(splitAnswer(acc).answer);
+    }
+
+    const parsed = splitAnswer(acc);
+    if (!parsed.answer.trim()) { bubble.remove(); throw new Error('empty_response'); }
+
+    bubble.setText(parsed.answer);
+    bubble.finish();
+    // 히스토리에는 제어 블록을 남기지 않는다 — 다음 턴 프롬프트를 오염시킨다
+    history.push({ role:'assistant', content:parsed.answer.trim() });
+    saveCurrentChat();
+    if (parsed.place) addPlaceAsk(parsed.place);
+    addFollowups(parseFollowups(parsed.tail));
+
+    // 같은 주제로 3턴 이상 이어지면 해결 실패 신호로 본다 (PRD 6.5)
+    if (history.filter(m => m.role === 'user').length >= 3) {
+      el('escalate').dataset.show = 'true';
+    }
+  } catch (err) {
+    typing.remove();
+    console.error('[chat]', err);
+    addError(err.message);
+  } finally {
+    setBusy(false);
+  }
+}
+
+function autoGrow() {
+  const ta = el('input');
+  ta.style.height = 'auto';
+  ta.style.height = Math.min(ta.scrollHeight, 132) + 'px';
+}
+
+/* ══ S03 · 연결 요청서 ═══════════════════════════════════════ */
+function openRequest(from) {
+  cameFrom = from || 'home';
+  const preset = (from === 'chat' && chatTopic !== 'auto') ? chatTopic
+               : (homeTopic !== 'auto' ? homeTopic : '');
+  el('fTopic').value = preset;
+  el('aiFill').disabled = history.length === 0;
+  clearFieldError('fNeed','eNeed'); clearFieldError('fContact','eContact');
+  show('request');
+
+  /* 채팅에서 넘어왔고 아직 비어 있으면 알아서 채운다.
+     언어 장벽이 있는 사용자에게 자유 서술을 요구하지 않는다 (PRD 8.3). */
+  if (from === 'chat' && history.length >= 2 && !el('fNeed').value.trim()) {
+    fillFromChat({ auto: true });
+  }
+}
+
+function renderRequestForm() {
+  const ls = el('fLang');
+  const keepLang = ls.value;
+  ls.innerHTML = LANGS.map(l => `<option value="${l.id}">${esc(l.label)}</option>`).join('');
+  ls.value = keepLang || lang;
+
+  const ts = el('fTopic');
+  const keepTopic = ts.value;
+  ts.innerHTML = `<option value="">${esc(t('chatAuto'))}</option>` +
+    TOPICS.map(x => `<option value="${x}">${esc(t(`t.${x}.name`))}</option>`).join('');
+  ts.value = keepTopic;
+
+  const box = el('fWhen');
+  box.innerHTML = '';
+  const defs = [['weekday','whenWeekday'],['weekend','whenWeekend'],['any','whenAny']];
+  defs.forEach(([id,key]) => {
+    const b = document.createElement('button');
+    b.className = 'seg'; b.type = 'button';
+    b.textContent = t(key);
+    b.setAttribute('aria-pressed', String(reqWhen === id));
+    b.addEventListener('click', () => {
+      reqWhen = id;
+      box.querySelectorAll('.seg').forEach((s,i) =>
+        s.setAttribute('aria-pressed', String(defs[i][0] === id)));
+    });
+    box.appendChild(b);
+  });
+
+  el('fNeed').placeholder = t('fNeedPh');
+  el('fContact').placeholder = 'name@example.com / 010-0000-0000';
+}
+
+function showFieldError(fieldId, errId, msg) {
+  el(fieldId).setAttribute('aria-invalid','true');
+  const e = el(errId); e.textContent = msg; e.hidden = false;
+}
+function clearFieldError(fieldId, errId) {
+  el(fieldId).removeAttribute('aria-invalid');
+  el(errId).hidden = true;
+}
+
+const isEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+const isPhone = v => /^[0-9+\-\s()]{7,20}$/.test(v) && (v.match(/\d/g) || []).length >= 8;
+
+/* 언어 장벽이 있는 사용자에게 자유 서술을 요구하지 않는다 (PRD 8.3) */
+async function fillFromChat({ auto = false } = {}) {
+  if (!history.length) { if (!auto) toast(t('noChat')); return; }
+
+  const btn = el('aiFill');
+  const box = el('fNeed');
+  const holder = box.placeholder;
+  btn.disabled = true;
+  box.disabled = true;
+  box.placeholder = t('aiFilling');
+
+  try {
+    const res = await fetch('/api/chat', {
+      method:'POST', headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({ messages:history, lang, intent:'summary' }),
+    });
+    const payload = await res.json().catch(() => ({}));
+    if (!res.ok || !payload.summary) throw new Error(payload.error || 'fail');
+    box.value = payload.summary;
+    clearFieldError('fNeed','eNeed');
+    toast(t('aiFilled'));
+  } catch (err) {
+    console.error('[summary]', err);
+    // 자동 채우기가 실패해도 막지 않는다 — 직접 쓰면 된다
+    if (!auto) toast(t('summaryFail'));
+  } finally {
+    box.disabled = false;
+    box.placeholder = holder;
+    btn.disabled = history.length === 0;
+  }
+}
+
+function submitRequest() {
+  let ok = true;
+  const need = el('fNeed').value.trim();
+  const contact = el('fContact').value.trim();
+
+  if (!need) { showFieldError('fNeed','eNeed', t('errNeed')); ok = false; }
+  else clearFieldError('fNeed','eNeed');
+
+  if (!contact || !(isEmail(contact) || isPhone(contact))) {
+    showFieldError('fContact','eContact', t('errContact')); ok = false;
+  } else clearFieldError('fContact','eContact');
+
+  if (!ok) {
+    const first = el('viewRequest').querySelector('[aria-invalid="true"]');
+    first?.scrollIntoView({ behavior:'smooth', block:'center' });
+    first?.focus();
+    return;
+  }
+
+  // MVP 는 실제로 전송하지 않는다. 접수처가 없으므로 결과 화면만 보여준다.
+  renderResult({ helpLang: el('fLang').value, topic: el('fTopic').value });
+  show('result');
+}
+
+/* ══ S04 · 매칭 결과 ═════════════════════════════════════════ */
+function helperCard(h) {
+  const meta = t('helperMeta')
+    .replace('%L', h.langs.map(langLabel).join(', '))
+    .replace('%Y', h.yrs);
+  const d = document.createElement('div');
+  d.className = 'card';
+  d.innerHTML =
+    `<div class="person">
+       <span class="av" aria-hidden="true"><svg class="ico"><use href="#i-person"/></svg></span>
+       <span class="info">
+         <span class="nm">${esc(h.nm)}</span>
+         <span class="meta">${esc(meta)}</span>
+         <span class="say">“${esc(h.say[lang] || h.say.en)}”</span>
+       </span>
+     </div>`;
+  return d;
+}
+
+function renderResult({ helpLang, topic }) {
+  const list = el('resHelperList');
+  list.innerHTML = '';
+
+  // 언어 · 분야 기준 규칙 기반 필터링 (PRD 8.2)
+  let matches = HELPERS.filter(h => h.langs.includes(helpLang));
+  if (topic) {
+    const exact = matches.filter(h => h.topics.includes(topic));
+    if (exact.length) matches = exact;
+  }
+
+  if (!matches.length) {
+    const p = document.createElement('p');
+    p.className = 'privacy'; p.textContent = t('noHelpers');
+    list.appendChild(p);
+  } else {
+    matches.slice(0,3).forEach(h => list.appendChild(helperCard(h)));
+  }
+
+  // 기관은 데모가 아니다 — 실제 번호로 지금 걸 수 있다
+  const box = el('resOrgList');
+  box.innerHTML = '';
+  const picked = [];
+  const pick = pred => {
+    const found = ORGS.find(o => pred(o) && !picked.includes(o));
+    if (found) picked.push(found);
+  };
+  pick(o => o.cat === 'emergency');
+  if (topic) pick(o => o.cat === topic);
+  pick(o => o.id === '1345');
+  pick(o => o.cat === 'admin');
+  picked.slice(0,3).forEach(o => box.appendChild(orgCard(o)));
+}
+
+/* ══ S05 · 기관 목록 ═════════════════════════════════════════ */
+const two = n => String(n).padStart(2,'0');
+const hhmm = m => `${two(Math.floor(m / 60))}:${two(m % 60)}`;
+
+function isOpen(org) {
+  if (org.h24) return true;
+  const now = new Date();
+  if (!org.days?.includes(now.getDay())) return false;
+  const m = now.getHours() * 60 + now.getMinutes();
+  return m >= org.from && m < org.to;
+}
+
+function orgCard(org) {
+  const open = isOpen(org);
+  const urgent = org.cat === 'emergency';
+  const hours = org.h24 ? t('h24') : `${t('weekdays')} ${hhmm(org.from)}–${hhmm(org.to)}`;
+  // 색만으로 상태를 전달하지 않는다 — 점 + 글자 (screen.md 4장)
+  const badge = org.h24 ? '' :
+    `<span class="badge ${open ? 'open' : 'shut'}">
+       <span class="dot" aria-hidden="true"></span>
+       <span>${esc(open ? t('open') : t('reopens').replace('%T', hhmm(org.from)))}</span>
+     </span>`;
+
+  const d = document.createElement('div');
+  d.className = 'card';
+  d.innerHTML =
+    `<div class="org${urgent ? ' urgent' : ''}">
+       <span class="info">
+         <span class="nm">${esc(org.nm[lang] || org.nm.en)}${
+           lang !== 'ko' ? ` <em>${esc(org.nm.ko)}</em>` : ''}</span>
+         <span class="meta">${esc(org.note[lang] || org.note.en)}</span>
+         <span class="hrs num">${esc(hours)}</span>
+         ${badge}
+       </span>
+       <a class="tel" href="tel:${esc(org.tel)}">
+         <svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg>
+         <span class="num">${esc(org.sub)}</span>
+       </a>
+     </div>`;
+  return d;
+}
+
+const ORG_GROUPS = [
+  ['emergency','gEmergency','i-siren'],
+  ['admin','gAdmin','i-bank'],
+  ['housing','gHousing','i-home-door'],
+  ['medical','gMedical','i-cross'],
+];
+
+function renderOrgFilters() {
+  const box = el('orgFilters');
+  box.innerHTML = '';
+  [['all','fAll',null],
+   ['emergency','fEmergency','i-siren'],
+   ['medical','t.medical.name','i-cross'],
+   ['housing','t.housing.name','i-home-door'],
+   ['admin','t.admin.name','i-bank']].forEach(([id,key,icon]) => {
+    const b = document.createElement('button');
+    b.className = 'fchip'; b.type = 'button';
+    b.setAttribute('aria-pressed', String(orgFilter === id));
+    b.innerHTML = (icon ? `<svg class="ico" aria-hidden="true"><use href="#${icon}"/></svg>` : '') +
+      `<span>${esc(t(key))}</span>`;
+    b.addEventListener('click', () => { orgFilter = id; renderOrgFilters(); renderOrgs(); });
+    box.appendChild(b);
+  });
+}
+
+function renderOrgs() {
+  const box = el('orgGroups');
+  box.innerHTML = '';
+  ORG_GROUPS.forEach(([cat,key,icon]) => {
+    if (orgFilter !== 'all' && orgFilter !== cat) return;   // 필터는 예외 없이 적용된다
+    const items = ORGS.filter(o => o.cat === cat);
+    if (!items.length) return;
+
+    const sec = document.createElement('section');
+    sec.style.marginBottom = '22px';
+    const h = document.createElement('p');
+    h.className = 'group-h' + (cat === 'emergency' ? ' urgent' : '');
+    h.innerHTML = `<svg class="ico" aria-hidden="true"><use href="#${icon}"/></svg>` +
+      `<span>${esc(t(key))}</span>`;
+    sec.appendChild(h);
+    const cards = document.createElement('div');
+    cards.className = 'cards';
+    items.forEach(o => cards.appendChild(orgCard(o)));
+    sec.appendChild(cards);
+    box.appendChild(sec);
+  });
+}
+
+/* ══ S07 · 대화 기록 화면 ════════════════════════════════════ */
+function renderHistory() {
+  const box = el('histBody');
+  const chats = loadChats();
+  box.innerHTML = '';
+
+  if (!chats.length) {
+    const e = document.createElement('div');
+    e.className = 'empty';
+    e.innerHTML =
+      '<span class="ring" aria-hidden="true"><svg class="ico"><use href="#i-clock"/></svg></span>' +
+      `<b>${esc(t('histEmpty'))}</b><p>${esc(t('histEmptyHint'))}</p>`;
+    box.appendChild(e);
+    return;
+  }
+
+  const list = document.createElement('div');
+  list.className = 'qlist';
+  chats.forEach(c => {
+    const row = document.createElement('div');
+    row.className = 'hist-row';
+    row.dataset.topic = c.topic || 'auto';
+
+    const open = document.createElement('button');
+    open.type = 'button';
+    open.style.cssText = 'display:flex;align-items:center;gap:11px;flex:1;min-width:0;background:none;border:0;text-align:left;cursor:pointer;padding:0';
+    open.innerHTML =
+      `<span class="tile" aria-hidden="true"><svg class="ico"><use href="#${
+        TOPIC_ICON[c.topic] || 'i-nabi'}"/></svg></span>` +
+      `<span class="info"><span class="ttl">${esc(c.title)}</span>` +
+      `<span class="sub">${esc(ago(c.ts))} · ${
+        esc(t('histMsgs').replace('%N', c.messages.length))}</span></span>`;
+    open.addEventListener('click', () => restoreChat(c.id));
+
+    const del = document.createElement('button');
+    del.className = 'del'; del.type = 'button';
+    del.setAttribute('aria-label', t('histDelete'));
+    del.innerHTML = '<svg class="ico" aria-hidden="true"><use href="#i-trash"/></svg>';
+    del.addEventListener('click', e => { e.stopPropagation(); deleteChat(c.id); });
+
+    row.append(open, del);
+    list.appendChild(row);
+  });
+  box.appendChild(list);
+
+  const wipe = document.createElement('button');
+  wipe.className = 'danger-btn'; wipe.type = 'button';
+  wipe.style.marginTop = '18px';
+  wipe.textContent = t('histClearAll');
+  wipe.addEventListener('click', clearAllChats);
+  box.appendChild(wipe);
+}
+
+function clearAllChats() {
+  writeChats([]);
+  currentChatId = null; history = [];
+  el('chatLog').innerHTML = '';
+  el('escalate').dataset.show = 'false';
+  el('fNeed').value = ''; el('aiFill').disabled = true;
+  renderHistory();
+  toast(t('histCleared'));
+}
+
+/* 저장된 대화를 채팅 화면에 되살린다 — 이어서 대화할 수 있다 */
+function restoreChat(id) {
+  const c = loadChats().find(x => x.id === id);
+  if (!c) return;
+
+  currentChatId = c.id;
+  chatTopic = TOPIC_ICON[c.topic] ? c.topic : 'auto';
+  history = c.messages.map(m => ({ role: m.role, content: m.content }));
+
+  el('chatLog').innerHTML = '';
+  el('escalate').dataset.show = 'false';
+  history.forEach(m => {
+    if (m.role === 'user') { addUser(m.content); return; }
+    const b = addAi();
+    b.setText(m.content);
+    b.finish();
+  });
+
+  syncChatHeader();
+  show('chat');
+  if (history.filter(m => m.role === 'user').length >= 3) {
+    el('escalate').dataset.show = 'true';
+  }
+  setTimeout(() => el('input').focus(), 60);
+}
+
+/* ══ 온보딩 ══════════════════════════════════════════════════ */
+let onbPick = lang;
+
+function renderOnboard() {
+  const box = el('onbOpts');
   box.innerHTML = '';
   LANGS.forEach(l => {
     const b = document.createElement('button');
-    b.className = 'opt';
-    b.dataset.sel = String(l.id === lang);
+    b.className = 'opt'; b.type = 'button';
+    b.dataset.sel = String(l.id === onbPick);
     b.dataset.soon = String(!l.ready);
-    // 국기는 보조 신호 — 언어명은 해당 언어로 표기 (screen.md S00)
     b.innerHTML =
-      `<span class="flag" aria-hidden="true">${l.flag}</span>` +
-      `<span class="name">${l.label}</span>` +
+      `<span class="code num" aria-hidden="true">${esc(l.code)}</span>` +
+      `<span class="name">${esc(l.label)}</span>` +
       (l.ready
-        ? (l.id === lang ? '<span class="check" aria-hidden="true">✓</span>' : '')
-        : `<span class="soon">(${t('soon')})</span>`);
+        ? (l.id === onbPick ? '<svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>' : '')
+        : `<span class="soon">${esc(t('soon'))}</span>`);
     b.setAttribute('aria-label', l.label + (l.ready ? '' : ' — ' + t('soon')));
-    if (l.id === lang) b.setAttribute('aria-current', 'true');
     b.addEventListener('click', () => {
-      if (!l.ready) { toast(t('toastSoon')); return; }   // soon 항목 → 토스트
-      setLang(l.id);
-      closeSheet();
+      if (!l.ready) { toast(t('toastSoon')); return; }
+      onbPick = l.id;
+      lang = l.id; render();      // 고르는 즉시 화면 언어가 바뀐다 (미리보기)
+      renderOnboard();
     });
     box.appendChild(b);
   });
 }
 
-function openSheet() {
-  scrim.dataset.open = 'true';
-  sheet.dataset.open = 'true';
-  langBtn.setAttribute('aria-expanded', 'true');
+/* ══ 언어 시트 ═══════════════════════════════════════════════ */
+const scrim = el('scrim'), sheet = el('sheet');
+let lastLangBtn = null;
+
+function renderOptions() {
+  const box = el('opts');
+  box.innerHTML = '';
+  LANGS.forEach(l => {
+    const b = document.createElement('button');
+    b.className = 'opt'; b.type = 'button';
+    b.dataset.sel = String(l.id === lang);
+    b.dataset.soon = String(!l.ready);
+    b.innerHTML =
+      `<span class="code num" aria-hidden="true">${esc(l.code)}</span>` +
+      `<span class="name">${esc(l.label)}</span>` +
+      (l.ready
+        ? (l.id === lang ? '<svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>' : '')
+        : `<span class="soon">${esc(t('soon'))}</span>`);
+    b.setAttribute('aria-label', l.label + (l.ready ? '' : ' — ' + t('soon')));
+    if (l.id === lang) b.setAttribute('aria-current','true');
+    b.addEventListener('click', () => {
+      if (!l.ready) { toast(t('toastSoon')); return; }
+      setLang(l.id); closeSheet();
+    });
+    box.appendChild(b);
+  });
+}
+
+function openSheet(btn) {
+  lastLangBtn = btn;
+  scrim.dataset.open = 'true'; sheet.dataset.open = 'true';
+  btn.setAttribute('aria-expanded','true');
   sheet.querySelector('.opt')?.focus();
 }
 function closeSheet() {
-  scrim.dataset.open = 'false';
-  sheet.dataset.open = 'false';
-  langBtn.setAttribute('aria-expanded', 'false');
-  langBtn.focus();
+  scrim.dataset.open = 'false'; sheet.dataset.open = 'false';
+  document.querySelectorAll('.js-lang').forEach(n => n.setAttribute('aria-expanded','false'));
+  lastLangBtn?.focus();
 }
 
-langBtn.addEventListener('click', openSheet);
-scrim.addEventListener('click', closeSheet);
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && sheet.dataset.open === 'true') closeSheet();
-});
+/* ══ 음성 입력 ═══════════════════════════════════════════════
+   Web Speech API — 브라우저가 인식하므로 서버도 키도 필요 없다.
+   인식 언어는 현재 UI 언어를 따라간다.
+   ══════════════════════════════════════════════════════════ */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+const SPEECH_LANG = { en:'en-US', ko:'ko-KR', vi:'vi-VN', zh:'zh-CN' };
+let recog = null;
 
-/* ── 토스트 ─────────────────────────────────────────────────── */
+function stopVoice() {
+  try { recog?.stop(); } catch { /* already stopped */ }
+}
+
+function startVoice(targetId, btn) {
+  if (!SR) { toast(t('voiceUnsupported')); return; }
+  if (recog) { stopVoice(); return; }          // 다시 누르면 정지
+
+  const ta = el(targetId);
+  const grow = targetId === 'homeInput' ? autoGrowHome : autoGrow;
+  const base = ta.value.trim();
+
+  recog = new SR();
+  recog.lang = SPEECH_LANG[lang] || 'en-US';
+  recog.interimResults = true;
+  recog.continuous = false;
+
+  recog.onresult = e => {
+    let heard = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) heard += e.results[i][0].transcript;
+    ta.value = base ? `${base} ${heard}` : heard;   // 기존 입력을 덮어쓰지 않는다
+    grow();
+  };
+  recog.onerror = ev => {
+    toast(ev.error === 'not-allowed' || ev.error === 'service-not-allowed'
+      ? t('voiceDenied') : t('voiceFail'));
+  };
+  recog.onend = () => {
+    btn.dataset.rec = 'false';
+    recog = null;
+    ta.focus();
+  };
+
+  try {
+    recog.start();
+    btn.dataset.rec = 'true';
+    toast(t('voiceListening'));
+  } catch {
+    recog = null;
+    btn.dataset.rec = 'false';
+  }
+}
+
+/* ══ 토스트 ══════════════════════════════════════════════════ */
 let toastTimer;
 function toast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.dataset.open = 'true';
+  const n = el('toast');
+  n.textContent = msg; n.dataset.open = 'true';
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { el.dataset.open = 'false'; }, 2200);
+  toastTimer = setTimeout(() => { n.dataset.open = 'false'; }, 2400);
 }
 
-/* ── 네비게이션 (S02~S06 미구현 — 목적지를 토스트로 표시) ────── */
-document.querySelectorAll('[data-go]').forEach(el => {
-  el.addEventListener('click', () => {
-    const dest = el.dataset.go;
-    const topic = el.dataset.topic || 'none';
-    const tpl = STRINGS[lang].nav[dest] || dest;
-    toast(tpl.replace('%s', TOPIC_NAMES[lang][topic] || topic));
+/* ══ 렌더 ════════════════════════════════════════════════════ */
+function render() {
+  const meta = LANGS.find(l => l.id === lang);
+  document.documentElement.lang = lang;
+
+  document.querySelectorAll('[data-i18n]').forEach(node => {
+    const val = t(node.dataset.i18n);
+    if (val.includes('\n')) node.innerHTML = val.split('\n').map(esc).join('<br>');
+    else node.textContent = val;
   });
+
+  document.querySelectorAll('.js-lang-code').forEach(n => { n.textContent = meta.code; });
+  document.querySelectorAll('.js-lang-name').forEach(n => { n.textContent = meta.label; });
+  document.querySelectorAll('.js-lang').forEach(n => {
+    n.setAttribute('aria-label', t('sheetTitle') + ': ' + meta.label);
+  });
+
+  el('input').placeholder = t('composerPh');
+  syncTopicCards(); renderTopicChip(); renderHomeAsk(); renderHomeExamples();
+  syncChatHeader(); renderRequestForm();
+  renderOrgFilters(); renderOrgs(); renderHistory();
+  renderOptions();
+}
+
+function setLang(next) {
+  lang = next;
+  try { localStorage.setItem(LANG_KEY, next); } catch { /* private mode */ }
+  render();
+}
+
+/* ══ 이벤트 배선 ═════════════════════════════════════════════ */
+document.querySelectorAll('[data-select]').forEach(c =>
+  c.addEventListener('click', () => selectTopic(c.dataset.select)));
+
+document.querySelectorAll('[data-go]').forEach(node =>
+  node.addEventListener('click', () => {
+    if (node.dataset.go === 'request') openRequest(current);
+  }));
+
+document.querySelectorAll('[data-back]').forEach(btn =>
+  btn.addEventListener('click', () => {
+    const to = btn.dataset.back;
+    show(to === 'auto' ? (cameFrom === 'chat' ? 'chat' : 'home') : to);
+  }));
+
+document.querySelectorAll('[data-tab]').forEach(btn =>
+  btn.addEventListener('click', () => show(btn.dataset.tab)));
+
+document.querySelectorAll('.js-lang').forEach(btn =>
+  btn.addEventListener('click', () => openSheet(btn)));
+
+document.querySelectorAll('[data-acc]').forEach(btn =>
+  btn.addEventListener('click', () => {
+    const body = el(btn.dataset.acc);
+    body.dataset.open = String(body.dataset.open !== 'true');
+  }));
+
+/* 홈 입력 */
+el('homeInput').addEventListener('input', autoGrowHome);
+el('homeInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitHome(); }
+});
+el('homeSend').addEventListener('click', submitHome);
+el('homeMic').addEventListener('click', () => startVoice('homeInput', el('homeMic')));
+
+/* 채팅 입력 */
+el('input').addEventListener('input', autoGrow);
+el('input').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
+});
+el('sendBtn').addEventListener('click', () => send());
+el('chatMic').addEventListener('click', () => startVoice('input', el('chatMic')));
+el('chatHelper').addEventListener('click', () => openRequest('chat'));
+
+/* 요청서 */
+el('aiFill').addEventListener('click', () => fillFromChat());
+el('reqSend').addEventListener('click', submitRequest);
+el('fNeed').addEventListener('input', () => clearFieldError('fNeed','eNeed'));
+el('fContact').addEventListener('input', () => clearFieldError('fContact','eContact'));
+
+/* 설정 */
+el('clearChat').addEventListener('click', clearAllChats);
+
+el('onbGo').addEventListener('click', () => {
+  try { localStorage.setItem(LANG_KEY, onbPick); } catch { /* private mode */ }
+  show('home');
 });
 
+scrim.addEventListener('click', closeSheet);
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (sheet.dataset.open === 'true') closeSheet();
+  else if (['chat','request','result'].includes(current)) show('home');
+});
+
+/* ══ 시작 ════════════════════════════════════════════════════ */
+if (!SR) {
+  // 미지원 브라우저에서는 눌러도 되는 것처럼 보이지 않게 한다
+  ['homeMic','chatMic'].forEach(id => { el(id).dataset.unsupported = 'true'; });
+}
+
 render();
+renderOnboard();
+autoGrowHome();
+show(storedLang() ? 'home' : 'onboard');   // 첫 방문이면 언어 선택부터
 </script>
 </body>
 </html>
