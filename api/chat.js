@@ -12,6 +12,15 @@ import { findCard, groundingFor, followupsFor, sourceBlockFor } from "./_kb.js";
 // Gemini 응답이 20초를 넘길 수 있다. 기본 10초로는 잘린다.
 export const config = { maxDuration: 60 };
 
+/* 위 maxDuration 을 코드도 알아야 재시도 예산을 계산할 수 있다.
+   전부 응답을 받아오는 데 쓰면 본문을 흘려보낼 시간이 남지 않고,
+   그러면 사용자에게 429 대신 게이트웨이 504 가 나간다. */
+const BUDGET_MS  = 60_000;
+const STREAM_MS  = 24_000;                    // 본문 스트리밍 몫으로 남겨둔다
+const ACQUIRE_MS = BUDGET_MS - STREAM_MS;     // 응답 헤더를 받는 데 쓸 수 있는 시간
+const ATTEMPT_MS = 20_000;                    // 호출 한 번이 예산을 독식하지 못하게
+const MIN_TRY_MS = 3_000;                     // 이보다 적게 남으면 시도할 가치가 없다
+
 // 첫 모델이 혼잡(503)하면 다음 모델로 넘어간다. 무료 티어에서 실제로 발생한다.
 // gemini-2.5-flash 는 신규 사용자 지원이 종료되어 목록에서 제외한다.
 const MODELS     = ["gemini-3.6-flash", "gemini-flash-latest", "gemini-3.5-flash"];
@@ -216,35 +225,57 @@ function upstreamError(status) {
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const RETRYABLE = new Set([429, 500, 502, 503, 504]);
 
-async function callGemini({ model, system, contents, stream, maxTokens }) {
+async function callGemini({ model, system, contents, stream, maxTokens, timeoutMs }) {
   const method = stream ? "streamGenerateContent?alt=sse&" : "generateContent?";
-  return fetch(`${API_BASE}/${model}:${method}key=${apiKey()}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      systemInstruction: { parts: [{ text: system }] },
-      contents,
-      safetySettings: SAFETY,
-      generationConfig: {
-        maxOutputTokens: maxTokens,
-        temperature: 0.4,
-        // 사고 시간을 낮춘다 — 채팅에서 첫 글자까지 10초는 너무 길다
-        thinkingConfig: { thinkingLevel: "low" },
-      },
-    }),
-  });
+
+  /* 타이머는 응답 헤더가 돌아올 때까지만 건다. 스트리밍 본문에까지 걸어두면
+     멀쩡히 받아놓은 답변이 중간에 끊긴다 — 그래서 AbortSignal.timeout 이
+     아니라 직접 만든 컨트롤러를 쓰고, fetch 가 풀리는 즉시 해제한다. */
+  const ctl   = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), timeoutMs ?? ATTEMPT_MS);
+
+  try {
+    return await fetch(`${API_BASE}/${model}:${method}key=${apiKey()}`, {
+      method: "POST",
+      signal: ctl.signal,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: system }] },
+        contents,
+        safetySettings: SAFETY,
+        generationConfig: {
+          maxOutputTokens: maxTokens,
+          temperature: 0.4,
+          // 사고 시간을 낮춘다 — 채팅에서 첫 글자까지 10초는 너무 길다
+          thinkingConfig: { thinkingLevel: "low" },
+        },
+      }),
+    });
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 /* 혼잡·과부하일 때 같은 모델을 한 번 더, 그다음 다른 모델을 시도한다.
    응답 본문은 포기할 때만 읽는다 — 한 번 읽으면 스트림이 소비된다. */
-async function callWithFallback(opts) {
+async function callWithFallback(opts, deadline) {
   let last = null;
+  const left = () => deadline - Date.now();
+
   for (const model of MODELS) {
     const attempts = model === MODELS[0] ? 2 : 1;
     for (let i = 0; i < attempts; i++) {
+      /* 남은 예산이 한 번 시도하기에도 모자라면 그만두고 지금까지 받은
+         응답을 그대로 돌려준다. 끝까지 매달리면 429 를 손에 쥐고도
+         핸들러가 그걸 반환하기 전에 함수가 죽는다. */
+      if (left() < MIN_TRY_MS) {
+        console.error(`[api/chat] 예산 소진 — ${model} 시도 생략 (남은 ${left()}ms)`);
+        return last;
+      }
+
       let r;
       try {
-        r = await callGemini({ ...opts, model });
+        r = await callGemini({ ...opts, model, timeoutMs: Math.min(ATTEMPT_MS, left()) });
       } catch (err) {
         console.error(`[api/chat] fetch threw on ${model}:`, err);
         last = null;
@@ -254,7 +285,7 @@ async function callWithFallback(opts) {
       last = r;
       if (!RETRYABLE.has(r.status)) return r;    // 재시도해도 달라지지 않는다
       console.error(`[api/chat] ${model} → ${r.status}, 재시도/폴백`);
-      if (i + 1 < attempts) await sleep(1200);
+      if (i + 1 < attempts && left() > MIN_TRY_MS + 1200) await sleep(1200);
     }
   }
   return last;
@@ -273,6 +304,8 @@ function extractText(payload) {
 
 /* ── 핸들러 ────────────────────────────────────────────────── */
 export default async function handler(req, res) {
+  const started = Date.now();   // 재시도 예산은 요청 시작부터 센다
+
   if (req.method !== "POST") return json(res, 405, { error: "method_not_allowed" });
 
   // 키가 없을 때 조용히 실패하지 않는다 — 설정 단계에서 바로 드러나야 한다
@@ -306,8 +339,8 @@ export default async function handler(req, res) {
         contents: toContents(body.messages),
         stream: false,
         maxTokens: 1500,
-      });
-      if (!up) return json(res, 502, { error: "upstream_error" });
+      }, started + BUDGET_MS - MIN_TRY_MS);
+      if (!up) return json(res, 503, { error: "overloaded" });
       if (!up.ok) {
         return json(res, up.status === 429 ? 429 : 502, { error: upstreamError(up.status) });
       }
@@ -327,9 +360,9 @@ export default async function handler(req, res) {
     contents: toContents(body.messages),
     stream: true,
     maxTokens: 2048,
-  });
+  }, started + ACQUIRE_MS);
 
-  if (!upstream) return json(res, 502, { error: "upstream_error" });
+  if (!upstream) return json(res, 503, { error: "overloaded" });
 
   if (!upstream.ok || !upstream.body) {
     const detail = await upstream.text().catch(() => "");
