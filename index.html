@@ -7,7 +7,9 @@
   <meta name="description" content="Nabi — ask anything about life in Korea in your own language.">
   <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%230A7A85%22%20d%3D%22M12%206.2C10.1%203.9%206.4%201.9%204%203.2%201.9%204.4%201.7%208%203.4%2010.2c1.7%202.2%205%203%208.6%202.6z%22%2F%3E%3Cpath%20fill%3D%22%230A7A85%22%20d%3D%22M12%2013.6c-3.4.1-6.4%201-7.4%203.1-1%202.2.4%204.6%202.8%204.8%202.3.2%204.2-2.2%204.6-5.5z%22%2F%3E%3Cpath%20fill%3D%22%23E8A33D%22%20d%3D%22M12%206.2c1.9-2.3%205.6-4.3%208-3%202.1%201.2%202.3%204.8.6%207-1.7%202.2-5%203-8.6%202.6z%22%2F%3E%3Cpath%20fill%3D%22%23E8A33D%22%20d%3D%22M12%2013.6c3.4.1%206.4%201%207.4%203.1%201%202.2-.4%204.6-2.8%204.8-2.3.2-4.2-2.2-4.6-5.5z%22%2F%3E%3Cpath%20stroke%3D%22%230F262B%22%20stroke-width%3D%221.3%22%20stroke-linecap%3D%22round%22%20d%3D%22M12%205.4v13.4%22%2F%3E%3C%2Fsvg%3E">
   <title>Nabi</title>
-
+<!-- 인증 필요 없는 오픈 지도(Leaflet) 불러오기 -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
   /* ══ Tokens ══════════════════════════════════════════════════ */
   /* 단청(丹靑) 계열 — 청(靑)을 주색, 황(黃)을 날개색, 적(赤)을 경보색으로.
@@ -1822,6 +1824,64 @@ function renderIntro() {
   });
   wrap.appendChild(chips);
   el('chatLog').appendChild(wrap);
+
+  // 🗺️ --- 인증 에러 없는 오픈 지도 코드 --- 🗺️
+  const container = document.createElement('div');
+  container.style.cssText = 'position: relative; width: 100%; margin-top: 15px;';
+
+  const mapBox = document.createElement('div');
+  mapBox.id = 'map';
+  mapBox.style.cssText = 'width: 100%; height: 260px; border-radius: 12px; border: 1px solid var(--rule); overflow: hidden; z-index: 1;';
+  container.appendChild(mapBox);
+
+  // 일반/위성 버튼 (구글 위성 사진 사용)
+  const btnBar = document.createElement('div');
+  btnBar.style.cssText = 'position: absolute; top: 8px; right: 8px; z-index: 999; display: flex; gap: 4px; background: rgba(255,255,255,0.9); padding: 3px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.15);';
+  
+  const normalBtn = document.createElement('button');
+  normalBtn.type = 'button'; normalBtn.textContent = '일반';
+  normalBtn.style.cssText = 'padding: 4px 8px; font-size: 0.75rem; font-weight: 700; border: none; border-radius: 6px; background: #0A7A85; color: #fff; cursor: pointer;';
+
+  const satelliteBtn = document.createElement('button');
+  satelliteBtn.type = 'button'; satelliteBtn.textContent = '위성';
+  satelliteBtn.style.cssText = 'padding: 4px 8px; font-size: 0.75rem; font-weight: 700; border: none; border-radius: 6px; background: transparent; color: #333; cursor: pointer;';
+
+  btnBar.append(normalBtn, satelliteBtn);
+  container.appendChild(btnBar);
+  el('chatLog').appendChild(container);
+  toBottom();
+
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(pos) {
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      
+      const map = L.map('map').setView([lat, lng], 16);
+      
+      // 일반 지도 레이어
+      const normalLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 });
+      // 구글 위성 지도 레이어
+      const satelliteLayer = L.tileLayer('http://mt0.google.com/vt/lyrs=s&hl=ko&x={x}&y={y}&z={z}', { maxZoom: 20 });
+      
+      normalLayer.addTo(map); // 기본은 일반 지도
+      
+      L.marker([lat, lng]).addTo(map).bindPopup('현재 내 위치').openPopup();
+      setTimeout(() => { map.invalidateSize(); }, 100);
+
+      normalBtn.addEventListener('click', () => {
+        map.removeLayer(satelliteLayer); map.addLayer(normalLayer);
+        normalBtn.style.background = '#0A7A85'; normalBtn.style.color = '#fff';
+        satelliteBtn.style.background = 'transparent'; satelliteBtn.style.color = '#333';
+      });
+
+      satelliteBtn.addEventListener('click', () => {
+        map.removeLayer(normalLayer); map.addLayer(satelliteLayer);
+        satelliteBtn.style.background = '#0A7A85'; satelliteBtn.style.color = '#fff';
+        normalBtn.style.background = 'transparent'; normalBtn.style.color = '#333';
+      });
+    });
+  }
+  // 🗺️ --- 코드 끝 --- 🗺️
 }
 
 const clearIntro = () => el('chatLog').querySelector('.intro')?.remove();
