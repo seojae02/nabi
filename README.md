@@ -62,7 +62,8 @@ npm run dev            # http://localhost:4321
 
 ```
 index.html          전체 UI. 화면 8개가 한 파일에 있다 (빌드 단계 없음)
-api/chat.js         Gemini 프록시 — 채팅 스트리밍 + 대화 요약
+api/chat.js         Gemini 프록시 — 채팅 스트리밍 + 대화 요약 + 근거 주입
+api/_kb.js          근거 지식베이스 — 카드 12장 + 출처 9곳 + 정규식 검색
 api/place.js        위치 기반 장소 조회 (NCP Geocoding + 지도 딥링크)
 scripts/dev.mjs     로컬 개발 서버. api/ 를 실제로 실행한다
 docs/prd.md         제품 요구사항 — 왜 이렇게 만들었는지
@@ -86,7 +87,7 @@ docs/screen.md      화면 정의서 — 실제 구현 기준
 
 ---
 
-## 기능 추가 전에 알아야 할 4가지
+## 기능 추가 전에 알아야 할 5가지
 
 ### 1. AI 응답에는 제어 블록이 실려 온다
 
@@ -147,7 +148,30 @@ for (const l of Object.keys(STRINGS)) {
 }"
 ```
 
-### 3. 외부 요청은 0개다
+### 3. 근거는 지식베이스에서 오고, 출처는 서버가 붙인다
+
+`api/_kb.js` 에 손으로 정제한 카드가 있다. 질문이 카드의 `match` 정규식에 걸리면
+`api/chat.js` 가 그 내용을 시스템 프롬프트에 주입한다 — 모델이 기억으로 답하는 대신
+확인된 정보를 근거로 답하게 만드는 장치다 (`docs/prd.md` 6.2).
+
+```
+질문 → findCard() → groundingFor() → 프롬프트 주입 → 답변
+                 └→ sourceBlockFor() → <<<SRC>>> → 출처 링크 카드
+```
+
+- **출처 URL 은 모델이 만들지 않는다.** 서버가 `<<<SRC>>>` 블록으로 붙인다. 모델에게
+  맡기면 링크를 지어내고, `renderMd()` 는 마크다운 링크를 지원하지도 않는다
+- **`match` 는 4개 언어 전부 넣는다.** 한국어·영어만 넣으면 vi/zh 사용자는 근거 없는
+  답변을 받는데 화면상으로는 구분이 안 된다
+- **`sources` 가 빈 카드는 만들지 않는다.** 근거 없는 카드는 존재 이유가 없다
+- **전화번호·수수료는 확인된 것만.** 추측해서 넣지 말 것
+- 카드를 추가하면 아래 검증 스크립트로 `chips.next` 가 살아있는지 반드시 확인한다
+
+카드 스키마는 `systemChat()` 의 5단 답변 구조와 1:1 로 맞춰져 있다 —
+`verdict`/`docs`/`where`/`warn`/`sources` 가 각각 결론/필요한 것/어디서 어떻게/주의할
+점/근거다. 새 카드도 이 대응을 깨지 말 것.
+
+### 4. 외부 요청은 0개다
 
 웹폰트도, 아이콘 CDN 도, 지도 SDK 도 쓰지 않는다. 이유는 **기관 목록이 오프라인에서도 열려야** 하기 때문이다 — 데이터 없는 환경에서 119 번호를 못 보면 안 된다.
 
@@ -155,7 +179,7 @@ for (const l of Object.keys(STRINGS)) {
 - 파비콘: 나비 마크 data URI
 - 새 아이콘이 필요하면 스프라이트에 `<symbol id="i-이름">` 을 추가한다. 이모지는 쓰지 않는다 — 플랫폼마다 다르게 렌더링된다
 
-### 4. 색은 토큰으로만 쓴다
+### 5. 색은 토큰으로만 쓴다
 
 단청(丹靑) 색계다. 하드코딩된 hex 를 넣지 말 것 — 다크모드가 깨진다.
 
@@ -195,6 +219,8 @@ for (const l of Object.keys(STRINGS)) {
 
 - 언어 온보딩 · 한국어 · 영어 · 베트남어 · 중국어(간체) 전환 (i18n 리소스 분리, 4개 언어 키 대칭)
 - AI 상담 — 스트리밍 · 멀티턴 · 5단 구조 답변 · 근거 표기 · 면책
+- **근거 기반 답변** — 질문이 지식베이스 카드에 걸리면 공공기관 정보를 프롬프트에
+  주입하고, 답변 아래에 출처 링크와 수집 시점을 붙인다 (`api/_kb.js`)
 - 답변 기반 후속 질문 칩
 - 응급 감지 → 119/1339 즉시 통화
 - 에스컬레이션 (3턴 이상 · 오류 · 사용자 요청)
@@ -210,7 +236,8 @@ for (const l of Object.keys(STRINGS)) {
 
 | 항목 | 상태 |
 |---|---|
-| **답변 근거(RAG)** | ❌ 모델 기억에만 의존. **가장 값어치 큰 다음 작업** |
+| **답변 근거 커버리지** | ⚠️ 카드 12장 — UI 예시 질문은 4개 언어 전부 덮지만, 그 밖의 질문은 아직 모델 기억에 의존한다. PRD 성공 지표는 80%+ |
+| 근거 없을 때 하드 거부 | ❌ PRD 6.2 의 엄격한 해석. 카드가 적어 지금 켜면 대부분이 막힌다 — 커버리지 확보 후 결정할 사항 |
 | 실제 지원자 매칭 | ❌ 시드 데이터 5명. 가입·검증 플로우 없음 |
 | 요청서 실제 전송 | ❌ 접수처가 없어 결과 화면만 보여준다 |
 | 용어 사전 (`S07`) | ❌ 미구현 |
@@ -271,7 +298,41 @@ import re,pathlib
 open('/tmp/c.mjs','w').write(re.search(r'<script>(.*?)</script>',
   pathlib.Path('index.html').read_text(encoding='utf-8'),re.S).group(1))"
 node --check /tmp/c.mjs
-node --check api/chat.js && node --check api/place.js
+node --check api/chat.js && node --check api/place.js && node --check api/_kb.js
+
+# 지식베이스 무결성 — 필수 필드 · 존재하지 않는 출처 · 끊긴 chip 링크
+node -e '
+(async () => {
+  const { CARDS, SOURCES } = await import("./api/_kb.js");
+  let bad = 0;
+  for (const [id, c] of Object.entries(CARDS)) {
+    if (!c.sources?.length) { console.log("근거 없는 카드:", id); bad++; }
+    for (const s of c.sources || []) if (!SOURCES[s]) { console.log("없는 출처:", id, s); bad++; }
+    for (const ch of c.chips || []) if (!CARDS[ch.next]) { console.log("끊긴 chip:", id, "→", ch.next); bad++; }
+  }
+  console.log(bad ? "❌ " + bad : "✅ 카드 " + Object.keys(CARDS).length + "장 정상");
+})();'
+
+# UI 예시 질문이 4개 언어 전부 카드에 걸리는지 — 근거 커버리지의 최소 조건
+python3 - << 'PY' > /tmp/strings.mjs
+import pathlib
+s = pathlib.Path('index.html').read_text(encoding='utf-8')
+i = s.index('const STRINGS = {'); j = s.index(chr(10) + '};', i) + 3
+print(s[i:j].replace('const STRINGS =', 'export const STRINGS =', 1))
+PY
+node -e '
+(async () => {
+  const kb = await import("./api/_kb.js");
+  const { STRINGS } = await import("/tmp/strings.mjs");
+  let fail = 0, n = 0;
+  for (const lang of Object.keys(STRINGS))
+    for (const topic of Object.keys(STRINGS[lang].ex))
+      for (const q of STRINGS[lang].ex[topic]) {
+        n++;
+        if (!kb.findCard(q, topic)) { fail++; console.log("미매칭", lang, q); }
+      }
+  console.log(fail ? "❌ " + fail + "/" + n : "✅ " + n + "건 전부 매칭");
+})();'
 
 # 아이콘 참조 무결성
 for id in $(grep -o 'href="#i-[a-z-]*"' index.html | sed 's/href="#//;s/"//' | sort -u); do
