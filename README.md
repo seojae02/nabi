@@ -107,9 +107,11 @@ docs/screen.md      화면 정의서 — 실제 구현 기준
 - **스트리밍 중 마커가 조각으로 도착한다** (`<<<PLA`). 화면에 새지 않도록 꼬리를 잘라내고 있으니, 파서를 건드릴 땐 이 경우를 꼭 확인할 것
 - 히스토리에는 제어 블록을 저장하지 않는다. 남기면 다음 턴 프롬프트가 오염된다
 
-### 2. 문자열은 반드시 en / ko 양쪽에 넣는다
+### 2. 문자열은 반드시 4개 언어 전부에 넣는다
 
-하드코딩 금지. `STRINGS.en` 과 `STRINGS.ko` 에 같은 키가 있어야 한다.
+하드코딩 금지. `STRINGS.en` · `ko` · `vi` · `zh` 에 같은 키가 있어야 한다. `t()` 는 없는 키를 영어로 폴백하므로 빠뜨려도 화면은 깨지지 않는다 — **그래서 대칭 검사를 돌리지 않으면 누락을 못 본다.**
+
+`%N` `%R` `%Q` `%L` `%Y` `%T` 는 값이 치환되는 자리다. 번역할 때 반드시 그대로 남겨야 한다.
 
 ```js
 // 마크업
@@ -121,14 +123,28 @@ el('x').textContent = t('myKey');
 대칭 검사:
 
 ```bash
-python3 -c "
-import re,pathlib
-s=pathlib.Path('index.html').read_text(encoding='utf-8')
-js=re.search(r'<script>(.*?)</script>',s,re.S).group(1)
-b=js.split('const STRINGS = {',1)[1]
-en=b.split(chr(10)+'  ko: {',1)[0]; ko=b.split(chr(10)+'  ko: {',1)[1].split(chr(10)+'};',1)[0]
-k=lambda x:set(re.findall(r\"^\s{4}'?([A-Za-z0-9.]+)'?:\",x,re.M))
-a,c=k(en),k(ko); print('en',len(a),'ko',len(c),'차이',a^c or 'None')"
+# STRINGS 를 실제로 평가해서 비교한다 — 정규식으로 긁으면 중첩 키를 놓친다
+python3 - << 'PY' > /tmp/strings.mjs
+import pathlib
+s = pathlib.Path('index.html').read_text(encoding='utf-8')
+i = s.index('const STRINGS = {'); j = s.index(chr(10) + '};', i) + 3
+print(s[i:j].replace('const STRINGS =', 'export const STRINGS =', 1))
+PY
+
+node --input-type=module -e "
+import { STRINGS } from '/tmp/strings.mjs';
+const base = Object.keys(STRINGS.en).sort();
+const ph = s => (String(s).match(/%[A-Z]/g) || []).sort().join('');
+for (const l of Object.keys(STRINGS)) {
+  const k = Object.keys(STRINGS[l]).sort();
+  const miss  = base.filter(x => !k.includes(x));
+  const extra = k.filter(x => !base.includes(x));
+  const phBad = base.filter(x => x !== 'ex' && ph(STRINGS[l][x]) !== ph(STRINGS.en[x]));
+  console.log((miss.length || extra.length || phBad.length ? '❌' : '✅'), l, k.length,
+    miss.length  ? '누락:' + miss   : '',
+    extra.length ? '잉여:' + extra  : '',
+    phBad.length ? '플레이스홀더:' + phBad : '');
+}"
 ```
 
 ### 3. 외부 요청은 0개다
@@ -177,7 +193,7 @@ a,c=k(en),k(ko); print('en',len(a),'ko',len(c),'차이',a^c or 'None')"
 
 ### 동작하는 것
 
-- 언어 온보딩 · 한/영 전환 (i18n 리소스 분리, 베트남어·중국어는 구조만)
+- 언어 온보딩 · 한국어 · 영어 · 베트남어 · 중국어(간체) 전환 (i18n 리소스 분리, 4개 언어 키 대칭)
 - AI 상담 — 스트리밍 · 멀티턴 · 5단 구조 답변 · 근거 표기 · 면책
 - 답변 기반 후속 질문 칩
 - 응급 감지 → 119/1339 즉시 통화
@@ -197,7 +213,6 @@ a,c=k(en),k(ko); print('en',len(a),'ko',len(c),'차이',a^c or 'None')"
 | **답변 근거(RAG)** | ❌ 모델 기억에만 의존. **가장 값어치 큰 다음 작업** |
 | 실제 지원자 매칭 | ❌ 시드 데이터 5명. 가입·검증 플로우 없음 |
 | 요청서 실제 전송 | ❌ 접수처가 없어 결과 화면만 보여준다 |
-| 베트남어 · 중국어 | ❌ `LANGS` 에 `ready:false` |
 | 용어 사전 (`S07`) | ❌ 미구현 |
 | 취업 분야 | ❌ 의도적 제외 (`docs/prd.md` 5장) |
 
