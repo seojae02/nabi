@@ -7,6 +7,8 @@
    intent: "summary" → 대화를 연결 요청서용 한 단락으로 요약 (JSON)
    ══════════════════════════════════════════════════════════════ */
 
+import { findCard, groundingFor, followupsFor, sourceBlockFor } from "./_kb.js";
+
 // Gemini 응답이 20초를 넘길 수 있다. 기본 10초로는 잘린다.
 export const config = { maxDuration: 60 };
 
@@ -34,7 +36,19 @@ const LANGUAGE = {
 };
 
 /* ── 시스템 프롬프트 — PRD 6.2~6.5 가 코드로 내려오는 지점 ──── */
-function systemChat({ topic, lang }) {
+function systemChat({ topic, lang, hit }) {
+  /* 근거 카드가 있으면 프롬프트에 주입한다 (PRD 6.2 — 모델 기억에만
+     의존한 답변 금지). 없으면 빈 문자열이고 기존 동작이 그대로 유지된다.
+     카드 12장으로 하드 거부를 걸면 대부분의 질문이 막히므로, 지금은
+     근거가 있을 때만 강화하고 없을 때는 아래 "Honesty" 규칙에 맡긴다. */
+  let grounded = "";
+  if (hit) {
+    const nexts = followupsFor(hit.card, lang).map(q => "- " + q).join("\n");
+    grounded = "\n" + groundingFor(hit.card, lang) +
+      "\n\nIf these follow-up questions fit your answer, prefer them over inventing new ones:\n" +
+      nexts + "\n";
+  }
+
   return `You are Nabi, an assistant for foreign residents and visitors in South Korea.
 
 Your job is to understand the question, explain what to actually do in plain language, and hand off to a person or institution when that is the right answer. You are not a lawyer, a doctor, or a government official, and you never imply that you are.
@@ -53,6 +67,7 @@ This is not decoration. The user will show your answer to a clerk who may not sp
 
 ${TOPIC[topic] || TOPIC.auto}
 
+${grounded}
 # Answer shape
 
 Use this order. Skip any section that does not apply — do not pad.
@@ -277,6 +292,12 @@ export default async function handler(req, res) {
   const lang   = LANGUAGE[body.lang] ? body.lang : "en";
   const intent = body.intent === "summary" ? "summary" : "chat";
 
+  /* 근거 검색 — 마지막 사용자 질문으로 카드를 찾는다.
+     요약(summary)은 이미 있는 대화를 줄이는 일이라 근거가 필요 없다. */
+  const lastUser = [...body.messages].reverse().find(m => m.role === "user");
+  const hit = intent === "chat" ? findCard(lastUser?.content || "", topic) : null;
+  if (hit) console.log(`[api/chat] 근거 적용: ${hit.id}`);
+
   /* ── 요약: 한 번에 받아 JSON 으로 돌려준다 ── */
   if (intent === "summary") {
     try {
@@ -302,7 +323,7 @@ export default async function handler(req, res) {
 
   /* ── 채팅: SSE 를 평문 스트림으로 중계한다 ── */
   const upstream = await callWithFallback({
-    system: systemChat({ topic, lang }),
+    system: systemChat({ topic, lang, hit }),
     contents: toContents(body.messages),
     stream: true,
     maxTokens: 2048,
@@ -354,7 +375,14 @@ export default async function handler(req, res) {
       }
     }
 
-    if (!emitted) push("__NABI_EMPTY__");
+    if (!emitted) {
+      push("__NABI_EMPTY__");
+    } else if (hit) {
+      /* 출처는 모델에게 맡기지 않는다. URL 을 지어낼 수 있고, renderMd 가
+         링크를 지원하지도 않는다. 서버가 검증된 목록을 그대로 덧붙인다. */
+      const src = sourceBlockFor(hit.card, lang);
+      if (src) push("\n<<<SRC>>>\n" + src);
+    }
   } catch (err) {
     console.error("[api/chat] stream failed:", err);
     if (!emitted) push("__NABI_ERROR__");
