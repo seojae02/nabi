@@ -271,9 +271,20 @@ curl -s "https://nabi-korea.vercel.app/api/place?q=주민센터&lat=37.4979&lng=
 
 ## 배포
 
+**`main` 에 push 하면 자동으로 프로덕션에 올라간다.** 저장소가 Vercel 프로젝트(`nabi`)에 연결되어 있다.
+
+| 무엇을 하면 | 무엇이 생기나 |
+|---|---|
+| `main` 에 push / PR 머지 | 프로덕션 배포 → https://nabi-korea.vercel.app |
+| 다른 브랜치에 push · PR 열기 | 프리뷰 배포 (PR 에 URL 이 댓글로 붙는다) |
+
+수동 배포가 필요하면 (연결 끊겼을 때 · 커밋 없이 확인만 할 때):
+
 ```bash
-npx vercel deploy --prod --yes
+npx vercel@latest deploy --prod --yes
 ```
+
+`nabi-korea.vercel.app` 은 프로젝트 도메인으로 등록되어 있어 프로덕션 배포를 자동으로 따라간다. **`vercel alias set` 을 수동으로 부를 일은 없다** — 예전에는 alias 라서 배포해도 옛 빌드가 계속 서빙됐다.
 
 Vercel 환경변수(**하이픈 불가**)에 아래가 등록되어 있어야 한다.
 

@@ -6,6 +6,6 @@
   "description": "Nabi — life support service for foreign residents in Korea",
   "scripts": {
     "dev": "node --env-file=key.env scripts/dev.mjs",
-    "deploy": "vercel deploy --prod --yes"
+    "deploy": "npx vercel@latest deploy --prod --yes"
   }
 }
