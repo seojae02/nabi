@@ -7,9 +7,6 @@
   <meta name="description" content="Nabi — ask anything about life in Korea in your own language.">
   <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%230A7A85%22%20d%3D%22M12%206.2C10.1%203.9%206.4%201.9%204%203.2%201.9%204.4%201.7%208%203.4%2010.2c1.7%202.2%205%203%208.6%202.6z%22%2F%3E%3Cpath%20fill%3D%22%230A7A85%22%20d%3D%22M12%2013.6c-3.4.1-6.4%201-7.4%203.1-1%202.2.4%204.6%202.8%204.8%202.3.2%204.2-2.2%204.6-5.5z%22%2F%3E%3Cpath%20fill%3D%22%23E8A33D%22%20d%3D%22M12%206.2c1.9-2.3%205.6-4.3%208-3%202.1%201.2%202.3%204.8.6%207-1.7%202.2-5%203-8.6%202.6z%22%2F%3E%3Cpath%20fill%3D%22%23E8A33D%22%20d%3D%22M12%2013.6c3.4.1%206.4%201%207.4%203.1%201%202.2-.4%204.6-2.8%204.8-2.3.2-4.2-2.2-4.6-5.5z%22%2F%3E%3Cpath%20stroke%3D%22%230F262B%22%20stroke-width%3D%221.3%22%20stroke-linecap%3D%22round%22%20d%3D%22M12%205.4v13.4%22%2F%3E%3C%2Fsvg%3E">
   <title>Nabi</title>
-<!-- 인증 필요 없는 오픈 지도(Leaflet) 불러오기 -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
   /* ══ Tokens ══════════════════════════════════════════════════ */
   /* 단청(丹靑) 계열 — 청(靑)을 주색, 황(黃)을 날개색, 적(赤)을 경보색으로.
@@ -392,18 +389,6 @@
   .typing i:nth-child(2) { animation-delay:.18s; }
   .typing i:nth-child(3) { animation-delay:.36s; }
   @keyframes blink { 0%,60%,100% { opacity:.28 } 30% { opacity:1 } }
-
-  /* 대화에서 나온 장소를 내 위치 기준으로 찾는다.
-     위치 권한은 사용자가 버튼을 누를 때만 요청한다 (PRD 11장). */
-  .place-ask {
-    align-self:flex-start; display:inline-flex; align-items:center; gap:7px;
-    margin-top:-4px; padding:9px 14px;
-    background:var(--iris-dim); border:1px solid var(--iris);
-    border-radius:999px;
-    font-size:.83rem; font-weight:700; color:var(--iris); cursor:pointer;
-  }
-  .place-ask .ico { width:15px; height:15px; }
-  .place-ask:disabled { opacity:.55; cursor:default; }
 
   .places { align-self:stretch; display:flex; flex-direction:column; gap:8px; margin-top:-4px; }
   .places .head {
@@ -823,6 +808,96 @@
   .opt[data-sel="true"] .code { border-color:var(--guide); color:var(--guide); }
   .opt[data-soon="true"] { opacity:.4; }
 
+  /* ══ 입력창 위 도구 3가지 ════════════════════════════════════ */
+  .tools { display:flex; gap:7px; margin-bottom:9px; overflow-x:auto; scrollbar-width:none; }
+  .tools::-webkit-scrollbar { display:none; }
+  .tool {
+    flex:none; display:inline-flex; align-items:center; gap:6px;
+    padding:7px 12px; white-space:nowrap;
+    background:var(--panel-2); border:1px solid var(--rule); border-radius:999px;
+    font-size:.78rem; font-weight:700; color:var(--ink-2); cursor:pointer;
+  }
+  .tool .ico { width:14px; height:14px; color:var(--guide); }
+  .tool:active { background:var(--guide-dim); }
+  /* 답변이 갈 곳을 가리킨 동안만 눈에 띈다 — 늘 강조하면 신호가 아니다 */
+  .tool[data-hot="true"] { border-color:var(--iris); background:var(--iris-dim); color:var(--iris); }
+  .tool[data-hot="true"] .ico { color:var(--iris); }
+  .tool:disabled { opacity:.45; cursor:default; }
+
+  /* .phone 은 min-height 만 가져서 % 상한이 풀리지 않는다 — 뷰포트 기준으로 잡는다 */
+  .tool-sheet { max-height:min(84dvh, 748px); overflow-y:auto; overscroll-behavior:contain; }
+
+  .sug-list { display:flex; flex-direction:column; gap:8px; }
+  .sug {
+    display:flex; align-items:center; gap:10px; width:100%;
+    min-height:56px; padding:10px 13px; text-align:left; cursor:pointer;
+    background:var(--iris-dim); border:1px solid var(--iris); border-radius:12px;
+  }
+  .sug .ico { width:16px; height:16px; flex:none; color:var(--iris); }
+  .sug .ico.go { margin-left:auto; }
+  .sug .txt { min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .sug b { font-size:.95rem; font-weight:700; color:var(--ink); }
+  .sug i { font-style:normal; font-size:.78rem; line-height:1.4; color:var(--ink-3); }
+  /* 진료과 추천은 진단이 아니다 — 화면에서도 그렇게 읽혀야 한다 (PRD 6.4) */
+  .fac-ask {
+    display:flex; align-items:flex-start; gap:7px; margin:10px 0 14px;
+    font-size:.76rem; line-height:1.45; color:var(--ink-3);
+  }
+  .fac-ask .ico { width:13px; height:13px; margin-top:2px; flex:none; }
+
+  .fac-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .fac {
+    display:flex; align-items:center; gap:8px; min-height:52px; padding:0 12px;
+    background:var(--panel-2); border:1px solid var(--rule); border-radius:12px;
+    font-size:.86rem; font-weight:600; color:var(--ink); text-align:left; cursor:pointer;
+  }
+  .fac .ico { width:15px; height:15px; flex:none; color:var(--guide); }
+  .fac span { min-width:0; overflow-wrap:anywhere; }
+  .fac[data-sel="true"] { border-color:var(--guide); background:var(--guide-dim); }
+
+  /* 창구에서 내미는 화면 — 남이 읽는다. 크고 대비가 세야 한다. */
+  .kocard {
+    padding:16px; border-radius:14px;
+    background:var(--panel-2); border:1px solid var(--guide);
+    font-size:1.12rem; line-height:1.62; font-weight:600; color:var(--ink);
+    white-space:pre-wrap; overflow-wrap:anywhere;
+  }
+  .kocard[data-wait="true"] { font-size:.95rem; font-weight:500; color:var(--ink-3); }
+  /* 무엇을 보여주는지 모른 채 내밀게 하지 않는다 — 역번역을 함께 둔다 */
+  .backline { margin:12px 0 0; font-size:.83rem; line-height:1.55; color:var(--ink-3); white-space:pre-wrap; }
+  .backline b { display:block; margin-bottom:3px; font-size:.72rem; font-weight:700; }
+
+  .sheet-actions { display:flex; gap:8px; margin-top:14px; }
+  .sheet-actions button {
+    flex:1; min-height:44px; border-radius:11px; cursor:pointer;
+    font-size:.86rem; font-weight:700;
+    background:var(--panel-2); border:1px solid var(--rule); color:var(--ink-2);
+  }
+  .sheet-actions button:disabled { opacity:.45; cursor:default; }
+  .sheet-actions .go { background:var(--guide); border-color:var(--guide); color:var(--guide-ink); }
+
+  .tr-dir { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+  .tr-dir .pair { flex:1; font-size:.8rem; font-weight:700; color:var(--ink-2); }
+  .tr-dir button {
+    display:inline-flex; align-items:center; gap:6px; flex:none;
+    padding:6px 11px; border-radius:999px; cursor:pointer;
+    background:var(--guide-dim); border:1px solid var(--guide);
+    color:var(--guide); font-size:.78rem; font-weight:700;
+  }
+  .tr-dir button .ico { width:13px; height:13px; }
+  .tr-field {
+    width:100%; min-height:92px; padding:12px 13px;
+    background:var(--panel-2); border:1px solid var(--rule); border-radius:12px;
+    font-size:.95rem; line-height:1.5; resize:vertical; color:var(--ink);
+  }
+  .tr-field::placeholder { color:var(--ink-3); }
+  .tr-out {
+    margin-top:12px; padding:13px; border-radius:12px;
+    background:var(--guide-dim); border:1px solid var(--rule-soft);
+    font-size:1rem; line-height:1.6; white-space:pre-wrap; overflow-wrap:anywhere;
+  }
+  .tr-out .lbl { display:block; margin-bottom:5px; font-size:.72rem; font-weight:700; color:var(--ink-3); }
+
   /* ══ Toast ═══════════════════════════════════════════════════ */
   .toast {
     position:absolute; left:50%; bottom:92px; transform:translate(-50%,8px);
@@ -1048,6 +1123,21 @@
       </button>
 
       <div class="composer">
+        <!-- 입력창 위 도구 — 창구 앞에서 꺼내는 것들이라 답변을 기다리지 않고 닿아야 한다 -->
+        <div class="tools">
+          <button class="tool" type="button" id="toolPlace">
+            <svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg>
+            <span data-i18n="toolPlace"></span>
+          </button>
+          <button class="tool" type="button" id="toolStatus">
+            <svg class="ico" aria-hidden="true"><use href="#i-person"/></svg>
+            <span data-i18n="toolStatus"></span>
+          </button>
+          <button class="tool" type="button" id="toolTranslate">
+            <svg class="ico" aria-hidden="true"><use href="#i-globe"/></svg>
+            <span data-i18n="toolTranslate"></span>
+          </button>
+        </div>
         <div class="row">
           <textarea id="input" rows="1" enterkeyhint="send"></textarea>
           <button class="mic" type="button" id="chatMic">
@@ -1318,6 +1408,13 @@
       <div id="opts"></div>
     </div>
 
+    <div class="sheet tool-sheet" id="tsheet" role="dialog" aria-modal="true" aria-labelledby="tsheetTitle">
+      <div class="grip" aria-hidden="true"></div>
+      <h2 id="tsheetTitle"></h2>
+      <p class="sub" id="tsheetSub"></p>
+      <div id="tsheetBody"></div>
+    </div>
+
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
   </div>
 </div>
@@ -1398,7 +1495,7 @@ const HELPERS = [
 const STRINGS = {
   en: {
     continue:'Continue',
-    hero:'How can we help you\nwith life in Korea?',
+    hero:'Life in Korea.\nAnywhere, anything. With Nabi.',
     askPlaceholder:'Ask anything...',
     micLabel:'Voice input',
     voiceListening:'Listening... speak now.',
@@ -1421,13 +1518,30 @@ const STRINGS = {
     histEmptyHint:'Ask Nabi something and it will show up here.',
     histMsgs:'%N messages', histClearAll:'Delete all conversations',
     histDelete:'Delete this conversation', histCleared:'Conversations deleted.',
-    placeFind:'Find one near me', placeLocating:'Checking your location...',
+    placeLocating:'Checking your location...',
     placeDenied:'Location access was blocked. Allow it in your browser settings.',
     placeUnsupported:'This browser cannot share your location.',
     placeFail:"Couldn't find anything nearby. Try the map instead.",
     sourcesLabel:'Based on', asOfLabel:'Verified %T',
     placeNear:'Near %R', placeOpen:'Open map',
     placeOnMap:"Find “%Q” on the map", placeKm:'%N km away', placeM:'%N m away',
+    toolPlace:'Find a place', toolStatus:'Say it in Korean', toolTranslate:'Translate',
+    toolClose:'Close', toolCopy:'Copy', toolCopied:'Copied.',
+    facTitle:'Which place do you need?', facSub:'Pick one and Nabi will find it near you.',
+    facFromChat:'From your conversation',
+    facAsk:'Not sure which one? Ask at the reception desk when you arrive — they will point you to the right one.',
+    facCenter:'Community service center', facImmig:'Immigration office',
+    facHealth:'Public health center', facHospital:'Hospital', facPharmacy:'Pharmacy',
+    facPolice:'Police station', facTax:'Tax office', facBank:'Bank',
+    stTitle:'Show this to the staff',
+    stSub:'Nabi wrote your situation in Korean, based on your conversation.',
+    stMaking:'Writing it in Korean...',
+    stEmpty:'Ask something first — there is nothing to write yet.',
+    stFail:"Couldn't write it. Please try again.", stCheck:'What it says, in your language',
+    trTitle:'Translator', trSub:'Type in either language. Nabi translates it.',
+    trPh:'Type here...', trGo:'Translate', trSwap:'Swap direction',
+    trWorking:'Translating...', trFail:"Couldn't translate. Please try again.",
+    trResult:'Translation', trEmpty:'Type something to translate.',
     agoNow:'just now', agoMin:'%N min ago', agoHour:'%N h ago',
     agoYesterday:'yesterday', agoDay:'%N days ago',
     sheetTitle:'Choose language', sheetSub:'You can change this anytime.',
@@ -1511,7 +1625,7 @@ const STRINGS = {
 
   ko: {
     continue:'계속하기',
-    hero:'한국 생활, 무엇을\n도와드릴까요?',
+    hero:'한국 생활,\n어디든 무엇이든 Nabi와',
     askPlaceholder:'무엇이든 물어보세요...',
     micLabel:'음성 입력',
     voiceListening:'듣고 있습니다... 지금 말씀하세요.',
@@ -1534,13 +1648,30 @@ const STRINGS = {
     histEmptyHint:'Nabi에게 무엇이든 물어보면 여기에 쌓입니다.',
     histMsgs:'%N개 메시지', histClearAll:'대화 기록 전체 삭제',
     histDelete:'이 대화 삭제', histCleared:'대화 기록을 삭제했습니다.',
-    placeFind:'내 주변에서 찾기', placeLocating:'위치를 확인하는 중...',
+    placeLocating:'위치를 확인하는 중...',
     placeDenied:'위치 권한이 차단되었습니다. 브라우저 설정에서 허용해주세요.',
     placeUnsupported:'이 브라우저는 위치를 알려줄 수 없습니다.',
     placeFail:'주변에서 찾지 못했습니다. 지도에서 확인해보세요.',
     sourcesLabel:'근거', asOfLabel:'%T 기준',
     placeNear:'%R 기준', placeOpen:'지도 열기',
     placeOnMap:'지도에서 ‘%Q’ 찾기', placeKm:'%N km 거리', placeM:'%N m 거리',
+    toolPlace:'시설 안내받기', toolStatus:'내 상태 한국어로', toolTranslate:'번역기',
+    toolClose:'닫기', toolCopy:'복사', toolCopied:'복사했습니다.',
+    facTitle:'어디를 찾으시나요?', facSub:'선택하면 내 위치 기준으로 찾아드립니다.',
+    facFromChat:'대화에서 나온 곳',
+    facAsk:'어디인지 확실하지 않으면 도착해서 접수처에 물어보세요. 맞는 곳으로 안내해줍니다.',
+    facCenter:'주민센터', facImmig:'출입국·외국인청',
+    facHealth:'보건소', facHospital:'병원', facPharmacy:'약국',
+    facPolice:'경찰서', facTax:'세무서', facBank:'은행',
+    stTitle:'이 화면을 직원에게 보여주세요',
+    stSub:'대화 내용을 바탕으로 상황을 한국어로 정리했습니다.',
+    stMaking:'한국어로 정리하는 중...',
+    stEmpty:'먼저 질문해주세요 — 아직 정리할 내용이 없습니다.',
+    stFail:'정리하지 못했습니다. 다시 시도해주세요.', stCheck:'내 언어로 확인하기',
+    trTitle:'번역기', trSub:'어느 언어로든 입력하면 번역합니다.',
+    trPh:'여기에 입력하세요...', trGo:'번역', trSwap:'방향 바꾸기',
+    trWorking:'번역하는 중...', trFail:'번역하지 못했습니다. 다시 시도해주세요.',
+    trResult:'번역 결과', trEmpty:'번역할 내용을 입력해주세요.',
     agoNow:'방금', agoMin:'%N분 전', agoHour:'%N시간 전',
     agoYesterday:'어제', agoDay:'%N일 전',
     sheetTitle:'언어를 선택하세요', sheetSub:'언제든지 변경할 수 있습니다.',
@@ -1623,7 +1754,7 @@ const STRINGS = {
   },
   vi: {
     continue:'Tiếp tục',
-    hero:'Chúng tôi có thể giúp gì\ncho cuộc sống của bạn ở Hàn Quốc?',
+    hero:'Cuộc sống ở Hàn Quốc,\nđi đâu, việc gì, cũng có Nabi.',
     askPlaceholder:'Hỏi bất cứ điều gì...',
     micLabel:'Nhập bằng giọng nói',
     voiceListening:'Đang nghe... hãy nói ngay.',
@@ -1646,13 +1777,30 @@ const STRINGS = {
     histEmptyHint:'Hãy hỏi Nabi điều gì đó và nó sẽ xuất hiện ở đây.',
     histMsgs:'%N tin nhắn', histClearAll:'Xóa tất cả cuộc trò chuyện',
     histDelete:'Xóa cuộc trò chuyện này', histCleared:'Đã xóa các cuộc trò chuyện.',
-    placeFind:'Tìm gần tôi', placeLocating:'Đang xác định vị trí của bạn...',
+    placeLocating:'Đang xác định vị trí của bạn...',
     placeDenied:'Quyền truy cập vị trí đã bị chặn. Hãy cho phép trong cài đặt trình duyệt.',
     placeUnsupported:'Trình duyệt này không thể chia sẻ vị trí của bạn.',
     placeFail:'Không tìm thấy gì ở gần đây. Hãy thử xem trên bản đồ.',
     sourcesLabel:'Căn cứ', asOfLabel:'Đã kiểm tra %T',
     placeNear:'Gần %R', placeOpen:'Mở bản đồ',
     placeOnMap:'Tìm “%Q” trên bản đồ', placeKm:'Cách %N km', placeM:'Cách %N m',
+    toolPlace:'Tìm cơ sở', toolStatus:'Nói bằng tiếng Hàn', toolTranslate:'Dịch',
+    toolClose:'Đóng', toolCopy:'Sao chép', toolCopied:'Đã sao chép.',
+    facTitle:'Bạn cần tìm nơi nào?', facSub:'Chọn một nơi, Nabi sẽ tìm gần bạn.',
+    facFromChat:'Từ cuộc trò chuyện của bạn',
+    facAsk:'Không chắc nơi nào? Hãy hỏi tại quầy tiếp nhận khi đến — họ sẽ chỉ đúng nơi cho bạn.',
+    facCenter:'Trung tâm hành chính phường', facImmig:'Cục Xuất nhập cảnh',
+    facHealth:'Trung tâm y tế công', facHospital:'Bệnh viện', facPharmacy:'Nhà thuốc',
+    facPolice:'Đồn cảnh sát', facTax:'Cơ quan thuế', facBank:'Ngân hàng',
+    stTitle:'Hãy đưa màn hình này cho nhân viên',
+    stSub:'Nabi đã viết tình trạng của bạn bằng tiếng Hàn, dựa trên cuộc trò chuyện.',
+    stMaking:'Đang viết bằng tiếng Hàn...',
+    stEmpty:'Hãy hỏi trước — chưa có nội dung để viết.',
+    stFail:'Không viết được. Vui lòng thử lại.', stCheck:'Nội dung bằng ngôn ngữ của bạn',
+    trTitle:'Trình dịch', trSub:'Nhập bằng ngôn ngữ nào cũng được. Nabi sẽ dịch.',
+    trPh:'Nhập vào đây...', trGo:'Dịch', trSwap:'Đổi chiều',
+    trWorking:'Đang dịch...', trFail:'Không dịch được. Vui lòng thử lại.',
+    trResult:'Bản dịch', trEmpty:'Hãy nhập nội dung cần dịch.',
     agoNow:'vừa xong', agoMin:'%N phút trước', agoHour:'%N giờ trước',
     agoYesterday:'hôm qua', agoDay:'%N ngày trước',
     sheetTitle:'Chọn ngôn ngữ', sheetSub:'Bạn có thể thay đổi bất cứ lúc nào.',
@@ -1735,7 +1883,7 @@ const STRINGS = {
   },
   zh: {
     continue:'继续',
-    hero:'在韩国生活，\n有什么可以帮您？',
+    hero:'在韩国生活，\n去哪里、做什么，都有 Nabi。',
     askPlaceholder:'有什么想问的...',
     micLabel:'语音输入',
     voiceListening:'正在聆听...请说话。',
@@ -1758,13 +1906,30 @@ const STRINGS = {
     histEmptyHint:'向 Nabi 提问，记录会出现在这里。',
     histMsgs:'%N 条消息', histClearAll:'删除全部对话',
     histDelete:'删除此对话', histCleared:'已删除对话记录。',
-    placeFind:'查找我附近的地点', placeLocating:'正在确认您的位置...',
+    placeLocating:'正在确认您的位置...',
     placeDenied:'位置权限已被阻止。请在浏览器设置中允许。',
     placeUnsupported:'此浏览器无法获取您的位置。',
     placeFail:'附近没有找到。请在地图上查看。',
     sourcesLabel:'依据', asOfLabel:'%T 核对',
     placeNear:'%R 附近', placeOpen:'打开地图',
     placeOnMap:'在地图上查找“%Q”', placeKm:'距离 %N 公里', placeM:'距离 %N 米',
+    toolPlace:'查找机构', toolStatus:'用韩语说明', toolTranslate:'翻译',
+    toolClose:'关闭', toolCopy:'复制', toolCopied:'已复制。',
+    facTitle:'您需要去哪里？', facSub:'选择后，Nabi 会在您附近查找。',
+    facFromChat:'来自您的对话',
+    facAsk:'不确定是哪一个？到达后请在接待处询问，工作人员会指引您。',
+    facCenter:'居民中心', facImmig:'出入境·外国人厅',
+    facHealth:'保健所', facHospital:'医院', facPharmacy:'药店',
+    facPolice:'警察局', facTax:'税务署', facBank:'银行',
+    stTitle:'请把这个页面给工作人员看',
+    stSub:'Nabi 根据对话内容，用韩语整理了您的情况。',
+    stMaking:'正在用韩语整理...',
+    stEmpty:'请先提问 — 目前没有可整理的内容。',
+    stFail:'整理失败。请再试一次。', stCheck:'用您的语言查看内容',
+    trTitle:'翻译器', trSub:'用任意语言输入，Nabi 为您翻译。',
+    trPh:'请在此输入...', trGo:'翻译', trSwap:'切换方向',
+    trWorking:'正在翻译...', trFail:'翻译失败。请再试一次。',
+    trResult:'翻译结果', trEmpty:'请输入要翻译的内容。',
     agoNow:'刚刚', agoMin:'%N 分钟前', agoHour:'%N 小时前',
     agoYesterday:'昨天', agoDay:'%N 天前',
     sheetTitle:'请选择语言', sheetSub:'您可以随时更改。',
@@ -1890,6 +2055,7 @@ let cameFrom = 'home';    // S03 뒤로가기 목적지
 const CHAT_KEY = 'nabi.chats';
 const MAX_CHATS = 40;
 let currentChatId = null;
+let suggested = [];      // 답변이 가리킨 장소 후보 — 도구 시트 맨 위에 올린다
 
 function loadChats() {
   try {
@@ -2044,6 +2210,7 @@ function openChat(topic) {
   chatTopic = TOPIC_ICON[topic] ? topic : 'auto';
   history = [];
   currentChatId = null;          // 새 대화 — 기존 기록을 덮어쓰지 않는다
+  markPlaces([]);
   el('chatLog').innerHTML = '';
   el('escalate').dataset.show = 'false';
   renderIntro(); syncChatHeader(); show('chat');
@@ -2073,63 +2240,6 @@ function renderIntro() {
   wrap.appendChild(chips);
   el('chatLog').appendChild(wrap);
 
-  // 🗺️ --- 인증 에러 없는 오픈 지도 코드 --- 🗺️
-  const container = document.createElement('div');
-  container.style.cssText = 'position: relative; width: 100%; margin-top: 15px;';
-
-  const mapBox = document.createElement('div');
-  mapBox.id = 'map';
-  mapBox.style.cssText = 'width: 100%; height: 260px; border-radius: 12px; border: 1px solid var(--rule); overflow: hidden; z-index: 1;';
-  container.appendChild(mapBox);
-
-  // 일반/위성 버튼 (구글 위성 사진 사용)
-  const btnBar = document.createElement('div');
-  btnBar.style.cssText = 'position: absolute; top: 8px; right: 8px; z-index: 999; display: flex; gap: 4px; background: rgba(255,255,255,0.9); padding: 3px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.15);';
-  
-  const normalBtn = document.createElement('button');
-  normalBtn.type = 'button'; normalBtn.textContent = '일반';
-  normalBtn.style.cssText = 'padding: 4px 8px; font-size: 0.75rem; font-weight: 700; border: none; border-radius: 6px; background: #0A7A85; color: #fff; cursor: pointer;';
-
-  const satelliteBtn = document.createElement('button');
-  satelliteBtn.type = 'button'; satelliteBtn.textContent = '위성';
-  satelliteBtn.style.cssText = 'padding: 4px 8px; font-size: 0.75rem; font-weight: 700; border: none; border-radius: 6px; background: transparent; color: #333; cursor: pointer;';
-
-  btnBar.append(normalBtn, satelliteBtn);
-  container.appendChild(btnBar);
-  el('chatLog').appendChild(container);
-  toBottom();
-
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(pos) {
-      const lat = pos.coords.latitude;
-      const lng = pos.coords.longitude;
-      
-      const map = L.map('map').setView([lat, lng], 16);
-      
-      // 일반 지도 레이어
-      const normalLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 });
-      // 구글 위성 지도 레이어
-      const satelliteLayer = L.tileLayer('http://mt0.google.com/vt/lyrs=s&hl=ko&x={x}&y={y}&z={z}', { maxZoom: 20 });
-      
-      normalLayer.addTo(map); // 기본은 일반 지도
-      
-      L.marker([lat, lng]).addTo(map).bindPopup('현재 내 위치').openPopup();
-      setTimeout(() => { map.invalidateSize(); }, 100);
-
-      normalBtn.addEventListener('click', () => {
-        map.removeLayer(satelliteLayer); map.addLayer(normalLayer);
-        normalBtn.style.background = '#0A7A85'; normalBtn.style.color = '#fff';
-        satelliteBtn.style.background = 'transparent'; satelliteBtn.style.color = '#333';
-      });
-
-      satelliteBtn.addEventListener('click', () => {
-        map.removeLayer(normalLayer); map.addLayer(satelliteLayer);
-        satelliteBtn.style.background = '#0A7A85'; satelliteBtn.style.color = '#fff';
-        normalBtn.style.background = 'transparent'; normalBtn.style.color = '#333';
-      });
-    });
-  }
-  // 🗺️ --- 코드 끝 --- 🗺️
 }
 
 const clearIntro = () => el('chatLog').querySelector('.intro')?.remove();
@@ -2242,16 +2352,25 @@ function splitAnswer(acc) {
     return later.length ? Math.min(...later) : acc.length;
   };
 
-  let place = '';
+  /* 장소는 여러 개 올 수 있다 — 증상만으로 진료과가 하나로 좁혀지지 않을 때
+     후보를 같이 받는다. 한 줄은 '검색어 | 이유' 이고 이유는 없어도 된다. */
+  let places = [];
   if (pi !== -1) {
-    place = acc.slice(pi + PLACE_MARK.length, endOf(pi))
-      .split('\n').map(l => l.trim()).filter(Boolean)[0] || '';
-    place = place.replace(/^[-*•\s]+/, '').slice(0, 40);
+    places = acc.slice(pi + PLACE_MARK.length, endOf(pi))
+      .split('\n')
+      .map(l => l.replace(/^[-*•\s]+/, '').trim())
+      .filter(Boolean)
+      .slice(0, 3)
+      .map(l => {
+        const [q, ...rest] = l.split('|');
+        return { q: q.trim().slice(0, 30), why: rest.join('|').trim().slice(0, 80) };
+      })
+      .filter(p => p.q);
   }
 
   const tail = ni !== -1 ? acc.slice(ni + NEXT_MARK.length, endOf(ni)) : '';
   const src  = si !== -1 ? acc.slice(si + SRC_MARK.length,  endOf(si))  : '';
-  return { answer, place, tail, src };
+  return { answer, places, tail, src };
 }
 
 function parseFollowups(tail) {
@@ -2280,32 +2399,34 @@ const prettyDist = m => m == null ? ''
   : m >= 1000 ? t('placeKm').replace('%N', (m / 1000).toFixed(1))
               : t('placeM').replace('%N', m);
 
-function addPlaceAsk(term) {
-  const btn = document.createElement('button');
-  btn.className = 'place-ask'; btn.type = 'button';
-  btn.innerHTML = '<svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg>' +
-    `<span>${esc(t('placeFind'))}</span>`;
+/* 답변이 갈 곳을 가리키면 인라인 버튼을 띄우지 않고 '시설 안내받기' 에 표시만 남긴다.
+   장소 안내로 가는 입구를 하나로 모아야 어디를 눌러야 하는지 헷갈리지 않는다. */
+function markPlaces(list) {
+  suggested = Array.isArray(list) ? list.filter(p => p && p.q).slice(0, 3) : [];
+  el('toolPlace').dataset.hot = String(suggested.length > 0);
+}
 
-  btn.addEventListener('click', async () => {
-    btn.disabled = true;
-    btn.querySelector('span').textContent = t('placeLocating');
-    try {
-      const { lat, lng } = await coords();
-      const r = await fetch(`/api/place?q=${encodeURIComponent(term)}&lat=${lat}&lng=${lng}`);
-      const data = await r.json();
-      if (!r.ok) throw new Error(data.error || 'failed');
-      btn.remove();
-      addPlaces(term, data);
-    } catch (err) {
-      btn.disabled = false;
-      btn.querySelector('span').textContent = t('placeFind');
-      const key = { denied:'placeDenied', unsupported:'placeUnsupported' }[err.message] || 'placeFail';
-      toast(t(key));
-    }
-  });
+/* 위치를 못 얻어도 지도 검색은 항상 열 수 있다 — 막다른 길을 만들지 않는다.
+   좌표가 빠지면 지도 앱이 자기 위치로 정렬하므로 결과는 크게 다르지 않다. */
+const mapLinksFor = term => ({
+  naver:  `https://map.naver.com/p/search/${encodeURIComponent(term)}`,
+  kakao:  `https://map.kakao.com/link/search/${encodeURIComponent(term)}`,
+  google: `https://www.google.com/maps/search/${encodeURIComponent(term)}`,
+});
 
-  el('chatLog').appendChild(btn);
-  toBottom();
+async function runPlaceLookup(term) {
+  toast(t('placeLocating'));
+  try {
+    const { lat, lng } = await coords();
+    const r = await fetch(`/api/place?q=${encodeURIComponent(term)}&lat=${lat}&lng=${lng}`);
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || 'failed');
+    addPlaces(term, data);
+  } catch (err) {
+    const key = { denied:'placeDenied', unsupported:'placeUnsupported' }[err.message];
+    if (key) toast(t(key));
+    addPlaces(term, { query:term, region:null, results:[], links:mapLinksFor(term) });
+  }
 }
 
 function addPlaces(term, data) {
@@ -2493,7 +2614,7 @@ async function requestAnswer() {
     history.push({ role:'assistant', content:parsed.answer.trim() });
     saveCurrentChat();
     if (parsed.src) addSources(parsed.src);
-    if (parsed.place) addPlaceAsk(parsed.place);
+    if (parsed.places.length) markPlaces(parsed.places);
     addFollowups(parseFollowups(parsed.tail));
 
     // 같은 주제로 3턴 이상 이어지면 해결 실패 신호로 본다 (PRD 6.5)
@@ -2924,12 +3045,255 @@ function openSheet(btn) {
   lastLangBtn = btn;
   scrim.dataset.open = 'true'; sheet.dataset.open = 'true';
   btn.setAttribute('aria-expanded','true');
-  sheet.querySelector('.opt')?.focus();
+  sheet.querySelector('.opt')?.focus({ preventScroll:true });
 }
 function closeSheet() {
   scrim.dataset.open = 'false'; sheet.dataset.open = 'false';
   document.querySelectorAll('.js-lang').forEach(n => n.setAttribute('aria-expanded','false'));
-  lastLangBtn?.focus();
+  lastLangBtn?.focus({ preventScroll:true });
+}
+
+/* ══ 입력창 위 도구 3가지 ════════════════════════════════════
+   시설 안내 · 내 상태 한국어로 · 번역기.
+   창구 앞에서 쓰는 기능이라 답변을 기다렸다 누르는 흐름이면 늦다.
+   스크림은 언어 시트와 공유한다.
+   ══════════════════════════════════════════════════════════ */
+const tsheet = el('tsheet');
+let lastTool = null;
+
+function openTool(title, sub, build, opener) {
+  lastTool = opener || null;
+  el('tsheetTitle').textContent = title;
+  el('tsheetSub').textContent = sub;
+  const body = el('tsheetBody');
+  body.innerHTML = '';
+  build(body);
+  scrim.dataset.open = 'true';
+  tsheet.dataset.open = 'true';
+  tsheet.scrollTop = 0;
+  tsheet.querySelector('button, textarea')?.focus({ preventScroll:true });
+}
+
+function closeTool() {
+  scrim.dataset.open = 'false';
+  tsheet.dataset.open = 'false';
+  lastTool?.focus({ preventScroll:true });
+  lastTool = null;
+}
+
+function copyText(str) {
+  if (!navigator.clipboard) { toast(t('toolCopied')); return; }
+  navigator.clipboard.writeText(str)
+    .then(() => toast(t('toolCopied')), () => toast(t('stFail')));
+}
+
+/* 시트 하단 버튼 줄. 마지막 인자가 주 동작(색이 채워진 쪽)이다. */
+function sheetActions(...btns) {
+  const row = document.createElement('div');
+  row.className = 'sheet-actions';
+  btns.forEach(b => row.appendChild(b));
+  return row;
+}
+
+function sheetBtn(label, { go = false, disabled = false, onClick } = {}) {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.textContent = label;
+  if (go) b.className = 'go';
+  b.disabled = disabled;
+  if (onClick) b.addEventListener('click', onClick);
+  return b;
+}
+
+/* ── 1. 시설 안내받기 ─────────────────────────────────────── */
+const FACILITIES = [
+  { q:'주민센터',        key:'facCenter'   },
+  { q:'출입국·외국인청', key:'facImmig'    },
+  { q:'보건소',          key:'facHealth'   },
+  { q:'병원',            key:'facHospital' },
+  { q:'약국',            key:'facPharmacy' },
+  { q:'경찰서',          key:'facPolice'   },
+  { q:'세무서',          key:'facTax'      },
+  { q:'은행',            key:'facBank'     },
+];
+
+function openFacilities(opener) {
+  openTool(t('facTitle'), t('facSub'), body => {
+    const pick = term => { closeTool(); runPlaceLookup(term); };
+
+    /* 대화가 가리킨 곳을 이유와 함께 맨 위에 올린다. 증상만으로 진료과가
+       하나로 좁혀지지 않으면 후보가 여러 개 온다 — 고르는 건 사용자 몫이다. */
+    if (suggested.length) {
+      const head = document.createElement('p');
+      head.className = 'sub';
+      head.style.margin = '0 0 8px';
+      head.textContent = t('facFromChat');
+      body.appendChild(head);
+
+      const list = document.createElement('div');
+      list.className = 'sug-list';
+      suggested.forEach(p => list.appendChild(sugRow(p, pick)));
+      body.appendChild(list);
+
+      const ask = document.createElement('p');
+      ask.className = 'fac-ask';
+      ask.innerHTML = '<svg class="ico" aria-hidden="true"><use href="#i-info"/></svg>' +
+        `<span>${esc(t('facAsk'))}</span>`;
+      body.appendChild(ask);
+    }
+
+    const grid = document.createElement('div');
+    grid.className = 'fac-grid';
+    FACILITIES.forEach(f => grid.appendChild(facRow(t(f.key), f.q, pick)));
+
+    body.append(grid, sheetActions(sheetBtn(t('toolClose'), { onClick: closeTool })));
+  }, opener);
+}
+
+/* 대화에서 온 후보 — 이름 + 왜 여기인지 한 줄 */
+function sugRow(p, pick) {
+  const b = document.createElement('button');
+  b.className = 'sug'; b.type = 'button';
+  b.innerHTML = '<svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg>' +
+    `<span class="txt"><b>${esc(p.q)}</b>` +
+    (p.why ? `<i>${esc(p.why)}</i>` : '') + '</span>' +
+    '<svg class="ico go" aria-hidden="true"><use href="#i-arrow"/></svg>';
+  b.addEventListener('click', () => pick(p.q));
+  return b;
+}
+
+function facRow(label, term, pick) {
+  const b = document.createElement('button');
+  b.className = 'fac'; b.type = 'button';
+  b.innerHTML = '<svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg>' +
+    `<span>${esc(label)}</span>`;
+  b.addEventListener('click', () => pick(term));
+  return b;
+}
+
+/* ── 2. 내 상태 한국어로 ──────────────────────────────────────
+   창구·진료실에서 화면을 그대로 내미는 기능. 역번역을 같이 보여준다 —
+   자기가 무엇을 보여주는지 모르는 채로 내밀게 하면 안 된다.
+   ────────────────────────────────────────────────────────── */
+function openStatus(opener) {
+  if (history.length < 2) { toast(t('stEmpty')); return; }
+
+  openTool(t('stTitle'), t('stSub'), body => {
+    const card = document.createElement('div');
+    card.className = 'kocard';
+    card.dataset.wait = 'true';
+    card.textContent = t('stMaking');
+
+    const back = document.createElement('p');
+    back.className = 'backline';
+
+    const copy = sheetBtn(t('toolCopy'), { disabled:true });
+    const actions = sheetActions(sheetBtn(t('toolClose'), { onClick: closeTool }), copy);
+
+    body.append(card, back, actions);
+
+    fetch('/api/chat', {
+      method:'POST', headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({ messages:history, lang, intent:'korean' }),
+    }).then(async res => {
+      const payload = await res.json().catch(() => ({}));
+      if (!res.ok || !payload.ko) throw new Error(payload.error || 'fail');
+
+      card.dataset.wait = 'false';
+      card.textContent = payload.ko;
+
+      if (payload.back && lang !== 'ko') {
+        const lbl = document.createElement('b');
+        lbl.textContent = t('stCheck');
+        back.append(lbl, document.createTextNode(payload.back));
+      }
+      copy.disabled = false;
+      copy.classList.add('go');
+      copy.addEventListener('click', () => copyText(payload.ko));
+    }).catch(err => {
+      console.error('[korean]', err);
+      card.dataset.wait = 'false';
+      card.textContent = t('stFail');
+    });
+  }, opener);
+}
+
+/* ── 3. 번역기 ────────────────────────────────────────────────
+   대화 기록을 쓰지 않는다 — 번역한 문장이 다음 턴 프롬프트에 섞이면 안 된다.
+   ────────────────────────────────────────────────────────── */
+let trDir = 'toKo';   // toKo = 내 언어 → 한국어
+
+function openTranslate(opener) {
+  openTool(t('trTitle'), t('trSub'), body => {
+    const other = lang === 'ko' ? 'en' : lang;
+    const nameOf = id => (LANGS.find(l => l.id === id) || {}).label || id;
+    const pairOf = () => trDir === 'toKo' ? [other, 'ko'] : ['ko', other];
+
+    const dir = document.createElement('div');
+    dir.className = 'tr-dir';
+    const pair = document.createElement('span');
+    pair.className = 'pair';
+    const swap = document.createElement('button');
+    swap.type = 'button';
+    swap.innerHTML = '<svg class="ico" aria-hidden="true"><use href="#i-globe"/></svg>' +
+      `<span>${esc(t('trSwap'))}</span>`;
+    const paint = () => {
+      const [a, b] = pairOf();
+      pair.textContent = `${nameOf(a)} → ${nameOf(b)}`;
+    };
+    swap.addEventListener('click', () => {
+      trDir = trDir === 'toKo' ? 'toMine' : 'toKo';
+      paint();
+    });
+    paint();
+    dir.append(pair, swap);
+
+    const ta = document.createElement('textarea');
+    ta.className = 'tr-field'; ta.rows = 3; ta.placeholder = t('trPh');
+
+    const out = document.createElement('div');
+    out.className = 'tr-out'; out.hidden = true;
+
+    const copy = sheetBtn(t('toolCopy'), { disabled:true });
+    const go = sheetBtn(t('trGo'), { go:true });
+    const actions = sheetActions(sheetBtn(t('toolClose'), { onClick: closeTool }), copy, go);
+
+    const paintOut = text => {
+      out.hidden = false;
+      out.innerHTML = `<span class="lbl">${esc(t('trResult'))}</span>`;
+      out.append(document.createTextNode(text));
+    };
+
+    go.addEventListener('click', async () => {
+      const text = ta.value.trim();
+      if (!text) { toast(t('trEmpty')); ta.focus(); return; }
+      if (text.length > 2000) { toast(t('tooLong')); return; }
+
+      const [from, to] = pairOf();
+      go.disabled = true; go.textContent = t('trWorking');
+      copy.disabled = true;
+      paintOut(t('trWorking'));
+
+      try {
+        const res = await fetch('/api/chat', {
+          method:'POST', headers:{ 'Content-Type':'application/json' },
+          body: JSON.stringify({ intent:'translate', text, from, to, lang }),
+        });
+        const payload = await res.json().catch(() => ({}));
+        if (!res.ok || !payload.text) throw new Error(payload.error || 'fail');
+        paintOut(payload.text);
+        copy.disabled = false;
+        copy.onclick = () => copyText(payload.text);
+      } catch (err) {
+        console.error('[translate]', err);
+        paintOut(t('trFail'));
+      } finally {
+        go.disabled = false; go.textContent = t('trGo');
+      }
+    });
+
+    body.append(dir, ta, out, actions);
+  }, opener);
 }
 
 /* ══ 음성 입력 ═══════════════════════════════════════════════
@@ -3080,10 +3444,18 @@ el('onbGo').addEventListener('click', () => {
   show('home');
 });
 
-scrim.addEventListener('click', closeSheet);
+el('toolPlace').addEventListener('click',     e => openFacilities(e.currentTarget));
+el('toolStatus').addEventListener('click',    e => openStatus(e.currentTarget));
+el('toolTranslate').addEventListener('click', e => openTranslate(e.currentTarget));
+
+scrim.addEventListener('click', () => {
+  if (tsheet.dataset.open === 'true') closeTool();
+  else closeSheet();
+});
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
-  if (sheet.dataset.open === 'true') closeSheet();
+  if (tsheet.dataset.open === 'true') closeTool();
+  else if (sheet.dataset.open === 'true') closeSheet();
   else if (['chat','request','result'].includes(current)) show('home');
 });
 
