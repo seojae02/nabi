@@ -3,8 +3,11 @@
    API 키는 이 함수 안에서만 존재한다. 브라우저로도, 저장소로도
    나가지 않는다. (docs/prd.md 11장)
 
-   intent: "chat"    → 답변을 SSE 로 스트리밍
-   intent: "summary" → 대화를 연결 요청서용 한 단락으로 요약 (JSON)
+   intent: "chat"      → 답변을 SSE 로 스트리밍
+   intent: "summary"   → 대화를 연결 요청서용 한 단락으로 요약 (JSON)
+   intent: "korean"    → 대화에서 사용자의 상황을 한국어 문장으로 정리 (JSON)
+                         창구 직원에게 화면을 그대로 보여주기 위한 것
+   intent: "translate" → 텍스트 한 건을 번역 (JSON)
    ══════════════════════════════════════════════════════════════ */
 
 import { findCard, groundingFor, followupsFor, sourceBlockFor } from "./_kb.js";
@@ -125,11 +128,23 @@ If the question describes a medical emergency — trouble breathing, unconscious
 
 # Where to go
 
-If your answer tells them to go somewhere physical — a district office, an immigration office, a hospital, a public health center, a bank — output this line on its own right after the answer:
+If your answer tells them to go somewhere physical — a district office, an immigration office, a clinic, a public health center, a bank — output this line on its own right after the answer:
 
 <<<PLACE>>>
 
-Then, on the next line, the Korean search term for that kind of place and nothing else. Use the generic Korean name, not a specific branch: 주민센터, 출입국·외국인청, 보건소, 세무서, 경찰서, 병원, 약국.
+Then 1 to 3 lines, most likely first, one place per line, in exactly this shape:
+
+Korean search term | one short reason in ${LANGUAGE[lang] || LANGUAGE.en}
+
+The search term:
+
+- Korean only, and something a map can find. No specific branch, no hospital brand name.
+- Administrative: 주민센터, 출입국·외국인청, 보건소, 세무서, 경찰서, 약국, 은행.
+- **Medical: name the department, not just 병원.** Use the one people with this problem normally go to first: 내과, 정형외과, 이비인후과, 피부과, 치과, 안과, 산부인과, 신경과, 정신건강의학과, 가정의학과, 응급실.
+- If more than one department could fit what they described, list them — that is what the extra lines are for.
+- If what they said is not specific enough to tell, put 가정의학과 first and then the closest candidates. Do not pick one at random to look decisive.
+
+The reason is one short clause naming what it handles — where people with this kind of problem usually go. **It is not a diagnosis and must not read like one.** Do not name a condition, do not say what they have, do not predict what the doctor will find.
 
 Skip this block entirely when the answer is only an explanation, or when everything can be done online.
 
@@ -144,6 +159,50 @@ Then 2 or 3 questions this person is most likely to ask next, one per line. No b
 Base them on your own answer, not on generic advice. If your answer mentioned a Korean term, an office, or a deadline they may not understand, make one of them ask about that specific thing — for example "What is 확정일자?" or "Where is the 주민센터?".
 
 Output nothing after those lines.`;
+}
+
+/* ── 창구용 한국어 정리 (intent: korean) ─────────────────────
+   말이 막히는 자리에서 화면을 그대로 내밀기 위한 기능이다.
+   역번역을 같은 응답에 실어 보낸다 — 자기가 무엇을 보여주는지
+   모르는 채로 내밀게 하면 안 된다. 호출은 1회로 끝낸다.
+   ──────────────────────────────────────────────────────── */
+function systemKorean({ lang }) {
+  const back = lang === "ko" ? "" : `
+
+After the statement, output this exact line on its own:
+
+<<<BACK>>>
+
+Then the same statement in ${LANGUAGE[lang] || LANGUAGE.en}, so the person knows what they are about to show. Output nothing after it.`;
+
+  return `You write a short statement in KOREAN that a foreign resident will show, on their phone screen, to a Korean staff member — a clerk at a district office, a nurse, a pharmacist, a landlord.
+
+Read the conversation and write what this person needs to get across right now.
+
+# Rules
+
+- Write the statement in Korean only. No other language, no romanization, no translation in parentheses.
+${lang === "ko" ? "" : "- Begin with exactly this sentence: 저는 한국어를 잘 못합니다.\n"}- 2 to 5 short sentences, first person, polite (해요체 or 합니다체).
+- Cover, in this order and only when the conversation supports it: what the situation is, what they need, and what they are asking the staff to do.
+- If it is medical: where it hurts, since when, how it feels, and anything they already took. Only what the conversation actually says.
+- Never invent a detail the conversation does not contain — no symptoms, no dates, no amounts. Missing is better than wrong: the staff will act on this.
+- No names, ID numbers, card numbers, addresses, or phone numbers, even if the user gave them.
+- No headings, no bullets, no markdown, no quotation marks. Plain sentences only.${back}`;
+}
+
+/* ── 번역기 (intent: translate) ──────────────────────────────
+   생활 안내와 무관한 한 문장짜리 번역도 필요하다. 대화 기록을
+   쓰지 않으므로 히스토리를 오염시키지 않는다.
+   ──────────────────────────────────────────────────────── */
+function systemTranslate({ from, to }) {
+  return `You are a translator. Translate the user's message from ${LANGUAGE[from] || LANGUAGE.en} into ${LANGUAGE[to] || LANGUAGE.ko}.
+
+- Output ONLY the translation. Nothing before it, nothing after it.
+- No explanation, no notes, no romanization, no quotation marks, no markdown.
+- Keep names, numbers, addresses, and document names exactly as given.
+- Match the register of the original. A polite request stays a polite request.
+- If the message is already in ${LANGUAGE[to] || LANGUAGE.ko}, output it unchanged.
+- Translate even if the message is a fragment or a single word. Never ask a question back.`;
 }
 
 function systemSummary({ lang }) {
@@ -184,7 +243,7 @@ async function readJson(req) {
   return JSON.parse(Buffer.concat(chunks).toString("utf8"));
 }
 
-function validate(body) {
+function validate(body, intent) {
   if (!body || typeof body !== "object") return "bad_request";
   const { messages } = body;
   if (!Array.isArray(messages) || messages.length === 0) return "no_messages";
@@ -194,7 +253,13 @@ function validate(body) {
     if (typeof m.content !== "string" || !m.content.trim()) return "empty_content";
     if (m.content.length > MAX_CHARS) return "message_too_long";
   }
-  if (messages[messages.length - 1].role !== "user") return "last_must_be_user";
+  /* 답을 이어 쓰는 건 chat 뿐이다. summary·korean 은 이미 끝난 대화를 읽는
+     쪽이라 마지막이 assistant 로 끝난다 — 사용자가 답변을 받고 나서 누르는
+     버튼이기 때문이다. 여기에 같은 규칙을 걸면 정상 경로가 400 으로 막힌다. */
+  if (intent === "chat" && messages[messages.length - 1].role !== "user") {
+    return "last_must_be_user";
+  }
+  if (!messages.some(m => m.role === "user")) return "no_messages";
   return null;
 }
 
@@ -204,6 +269,18 @@ const toContents = messages =>
     role: m.role === "assistant" ? "model" : "user",
     parts: [{ text: m.content }],
   }));
+
+/* Gemini 는 model 턴으로 끝나는 요청을 거부한다("Requests ending with a
+   model turn are not supported"). summary·korean 은 이미 끝난 대화를 읽는
+   쪽이라 마지막이 model 인 것이 정상이므로, 지시문을 user 턴 하나로 덧붙여
+   요청을 닫는다. chat 은 애초에 user 로 끝나므로 그대로 지나간다. */
+function toContentsFor(messages, ask) {
+  const c = toContents(messages);
+  if (c.length && c[c.length - 1].role === "model") {
+    c.push({ role: "user", parts: [{ text: ask }] });
+  }
+  return c;
+}
 
 /* 의료·법률 질문이 과차단되지 않도록 임계값을 높인다 */
 const SAFETY = [
@@ -318,12 +395,43 @@ export default async function handler(req, res) {
     return json(res, 400, { error: "bad_json" });
   }
 
-  const invalid = validate(body);
+  const lang   = LANGUAGE[body.lang] ? body.lang : "en";
+  const INTENTS = new Set(["chat", "summary", "korean", "translate"]);
+  const intent = INTENTS.has(body.intent) ? body.intent : "chat";
+
+  /* ── 번역: 대화 기록 없이 텍스트 한 건만 다룬다 ── */
+  if (intent === "translate") {
+    const text = typeof body.text === "string" ? body.text.trim() : "";
+    if (!text) return json(res, 400, { error: "empty_content" });
+    if (text.length > MAX_CHARS) return json(res, 400, { error: "message_too_long" });
+
+    const from = LANGUAGE[body.from] ? body.from : "en";
+    const to   = LANGUAGE[body.to]   ? body.to   : "ko";
+    if (from === to) return json(res, 200, { text });
+
+    try {
+      const up = await callWithFallback({
+        system: systemTranslate({ from, to }),
+        contents: toContents([{ role: "user", content: text }]),
+        stream: false,
+        maxTokens: 1500,
+      }, started + BUDGET_MS - MIN_TRY_MS);
+      if (!up)     return json(res, 502, { error: "upstream_error" });
+      if (!up.ok)  return json(res, up.status === 429 ? 429 : 502, { error: upstreamError(up.status) });
+
+      const out = extractText(await up.json()).trim();
+      if (!out) return json(res, 502, { error: "empty_response" });
+      return json(res, 200, { text: out });
+    } catch (err) {
+      console.error("[api/chat] translate failed:", err);
+      return json(res, 502, { error: "upstream_error" });
+    }
+  }
+
+  const invalid = validate(body, intent);
   if (invalid) return json(res, 400, { error: invalid });
 
   const topic  = TOPIC[body.topic] ? body.topic : "auto";
-  const lang   = LANGUAGE[body.lang] ? body.lang : "en";
-  const intent = body.intent === "summary" ? "summary" : "chat";
 
   /* 근거 검색 — 마지막 사용자 질문으로 카드를 찾는다.
      요약(summary)은 이미 있는 대화를 줄이는 일이라 근거가 필요 없다. */
@@ -336,7 +444,8 @@ export default async function handler(req, res) {
     try {
       const up = await callWithFallback({
         system: systemSummary({ lang }),
-        contents: toContents(body.messages),
+        contents: toContentsFor(body.messages,
+          "Write the request-form text now, following the output rules."),
         stream: false,
         maxTokens: 1500,
       }, started + BUDGET_MS - MIN_TRY_MS);
@@ -350,6 +459,33 @@ export default async function handler(req, res) {
       return json(res, 200, { summary: text });
     } catch (err) {
       console.error("[api/chat] summary failed:", err);
+      return json(res, 502, { error: "upstream_error" });
+    }
+  }
+
+  /* ── 창구용 한국어 정리: 한국어 본문과 역번역을 함께 돌려준다 ── */
+  if (intent === "korean") {
+    try {
+      const up = await callWithFallback({
+        system: systemKorean({ lang }),
+        contents: toContentsFor(body.messages,
+          "Write the Korean statement now, following the rules."),
+        stream: false,
+        maxTokens: 1200,
+      }, started + BUDGET_MS - MIN_TRY_MS);
+      if (!up)     return json(res, 502, { error: "upstream_error" });
+      if (!up.ok)  return json(res, up.status === 429 ? 429 : 502, { error: upstreamError(up.status) });
+
+      const text = extractText(await up.json()).trim();
+      if (!text) return json(res, 502, { error: "empty_response" });
+
+      /* 제어 블록은 채팅과 같은 규약을 쓴다 (index.html splitAnswer 참고).
+         모델이 블록을 빠뜨려도 한국어 본문은 살아 있어야 한다. */
+      const [ko, back = ""] = text.split(/^<<<BACK>>>$/m);
+      if (!ko.trim()) return json(res, 502, { error: "empty_response" });
+      return json(res, 200, { ko: ko.trim(), back: back.trim() });
+    } catch (err) {
+      console.error("[api/chat] korean failed:", err);
       return json(res, 502, { error: "upstream_error" });
     }
   }
